@@ -66,7 +66,18 @@ function ensureDay(d){if(!state.days[d])state.days[d]={checks:{},submitted:false
 function current(){return ensureDay(state.currentDay);}
 function completedCount(d){return state.habits.filter(h=>ensureDay(d).checks[h.id]===true).length;}
 function pct(d){return state.habits.length?Math.round(completedCount(d)/state.habits.length*100):0;}
-function streak(){let n=0;for(let d=state.currentDay;d>=1;d--){if(state.days[d]?.submitted)n++;else break;}return n;}
+function streak(){
+  let latest = 0;
+  for(let d = 1; d <= 30; d++){
+    if(state.days[d]?.submitted) latest = d;
+  }
+  let n = 0;
+  for(let d = latest; d >= 1; d--){
+    if(state.days[d]?.submitted) n++;
+    else break;
+  }
+  return n;
+}
 function fmtDate(d){const dt=new Date(state.startDate+"T12:00:00");dt.setDate(dt.getDate()+d-1);return dt.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});}
 function render(){const d=current(),n=completedCount(state.currentDay),p=pct(state.currentDay);document.getElementById("dateLabel").textContent=`Day ${state.currentDay} of 30 · ${fmtDate(state.currentDay)}`;document.getElementById("streak").textContent=streak();document.getElementById("pct").textContent=p+"%";document.getElementById("dailyBar").style.width=p+"%";document.getElementById("count").textContent=`${n} of ${state.habits.length} habits`;const submitted=!!d.submitted;document.getElementById("status").textContent=submitted?"Submitted":p===100?"Ready to submit":"In progress";document.getElementById("submitBtn").disabled=submitted||p!==100;document.getElementById("submitBtn").textContent=submitted?"Day submitted":p===100?"Submit completed day":"Complete all habits to submit";document.getElementById("dayType").value=state.dayTypes[state.currentDay]||"College day";
 document.getElementById("habitList").innerHTML=state.habits.map((h,i)=>`<div class="habit ${d.checks[h.id]?'done':''}"><input type="checkbox" id="h${h.id}" ${d.checks[h.id]?'checked':''} ${submitted?'disabled':''} onchange="toggleHabit(${h.id},this.checked)"><label for="h${h.id}"><span class="num">HABIT ${String(i+1).padStart(2,'0')}</span>${esc(h.label)}</label></div>`).join("");
