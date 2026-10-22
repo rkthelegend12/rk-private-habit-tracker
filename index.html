@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RK Habits">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>RK — Private Habit Tracker</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151c2f;--panel2:#202941;--text:#f7f8fc;--muted:#aab4c8;--blue:#60a5fa;--green:#34d399;--orange:#fb923c;--line:#303b54;--red:#f87171}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#101a32,#090d18 65%);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+main{max-width:650px;margin:auto;padding:18px 15px 34px}.hero,.card{background:rgba(21,28,47,.96);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:0 8px 28px #0002}
+.kicker{font-size:11px;letter-spacing:.12em;color:var(--muted);font-weight:800}.top{display:flex;justify-content:space-between;gap:12px;align-items:center}.top h1{font-size:25px;margin:7px 0}.sub{color:var(--muted);font-size:13px;line-height:1.5}.flame{border-radius:16px;background:#33251d;padding:12px;text-align:center;color:var(--orange);min-width:74px;font-weight:800;font-size:22px}.flame small{display:block;font-size:11px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.stat{background:var(--panel2);border-radius:15px;padding:13px}.stat strong{display:block;font-size:24px;margin:4px 0}.stat span{font-size:12px;color:var(--muted)}
+.bar{height:10px;border-radius:99px;background:#30384c;overflow:hidden;margin:10px 0 6px}.bar>div{height:100%;width:0;background:var(--blue);border-radius:99px;transition:width .2s}.bar.green>div{background:var(--green)}
+.tabs{display:flex;gap:7px;margin:14px 0;position:sticky;top:0;padding:5px 0;background:#0d1323;z-index:3}.tabs button{flex:1;padding:11px 4px;font-size:13px}
+button,input,select{font:inherit}button{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:12px 14px;border-radius:13px;font-weight:700;cursor:pointer}button:active{transform:scale(.98)}button.primary{background:#2563eb;border-color:#2563eb}button.success{background:#047857;border-color:#047857}button.danger{color:var(--red)}button:disabled{opacity:.45;cursor:not-allowed}
+.habit{display:flex;gap:12px;align-items:flex-start;padding:14px 2px;border-bottom:1px solid var(--line)}.habit:last-child{border-bottom:0}.habit input{width:23px;height:23px;accent-color:var(--green);flex-shrink:0;margin-top:2px}.habit label{line-height:1.42;flex:1}.habit.done label{text-decoration:line-through;color:var(--muted)}.num{font-size:11px;color:var(--muted);display:block;margin-bottom:3px}
+.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.row input,.row select,input[type=text]{width:100%;background:#0e1527;border:1px solid var(--line);color:var(--text);padding:12px;border-radius:12px}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px}.sectionhead h2{margin:0;font-size:18px}.muted{color:var(--muted);font-size:13px}.hidden{display:none!important}
+.calendar{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}.day{min-height:64px;padding:8px 3px;border-radius:13px;text-align:center;border:1px solid var(--line);background:#10172a}.day strong{display:block;font-size:16px;margin:4px}.day small{font-size:10px;color:var(--muted)}.day.complete{background:#064e3b;border-color:#047857}.day.current{outline:2px solid var(--blue)}
+.editoritem{border:1px solid var(--line);padding:12px;border-radius:14px;margin:9px 0}.editoritem .row{margin-top:8px}.notice{padding:12px;border-radius:12px;background:#1e293b;color:#dbeafe;font-size:13px;margin:10px 0}.warn{color:#fed7aa}.footer{font-size:11px;color:var(--muted);line-height:1.5;padding:8px}
+@media(min-width:520px){.calendar{grid-template-columns:repeat(6,1fr)}}
+</style>
+</head>
+<body><main>
+<section class="hero">
+ <div class="top"><div><div class="kicker">PRIVATE • ON-DEVICE TRACKER</div><h1>Discipline, daily.</h1><div class="sub" id="dateLabel">30-day challenge</div></div><div class="flame">🔥 <span id="streak">0</span><small>DAY STREAK</small></div></div>
+ <div class="stats"><div class="stat"><span>TODAY'S PROGRESS</span><strong id="pct">0%</strong><div class="bar"><div id="dailyBar"></div></div><span id="count">0 of 9 habits</span></div><div class="stat"><span>CHALLENGE PROGRESS</span><strong id="overall">0/30</strong><div class="bar green"><div id="monthBar"></div></div><span id="remaining">30 days remaining</span></div></div>
+</section>
+<nav class="tabs"><button id="tabToday" class="primary" onclick="showView('today')">✓ Today</button><button id="tabMonth" onclick="showView('month')">▦ 30 Days</button><button id="tabEdit" onclick="showView('edit')">✎ Edit Habits</button></nav>
+<div id="notice" class="notice hidden" role="status"></div>
+<section id="todayView" class="card">
+ <div class="sectionhead"><h2>Today's habits</h2><span id="status" class="muted">In progress</span></div><p class="sub">Tap each checkbox as you complete a habit.</p>
+ <div class="row" style="margin:12px 0"><label for="dayType" class="muted" style="min-width:85px">Day type</label><select id="dayType" onchange="setDayType(this.value)"><option>College day</option><option>No college</option></select></div>
+ <div id="habitList"></div>
+ <button id="submitBtn" class="success" style="width:100%;margin-top:16px" onclick="submitDay()">Submit completed day</button>
+ <div class="row" style="margin-top:9px"><button style="flex:1" onclick="resetToday()">Reset today</button><button style="flex:1" onclick="prevDay()">← Previous</button><button style="flex:1" onclick="nextDay()">Next →</button></div>
+</section>
+<section id="monthView" class="card hidden"><div class="sectionhead"><h2>30-day journey</h2><span class="muted" id="monthCount">0/30 submitted</span></div><p class="sub">Green days are submitted. Tap a day to open it.</p><div id="calendar" class="calendar"></div></section>
+<section id="editView" class="card hidden"><div class="sectionhead"><h2>Manage habits</h2><span class="muted">Edit anytime</span></div><p class="sub">Changes apply to your checklist. Keep the habits meaningful and measurable.</p><div id="editList"></div><form id="addForm" class="row" style="margin-top:12px"><input id="newHabit" type="text" placeholder="Add a new habit…" maxlength="180" required><button class="primary" type="submit">Add</button></form><button style="width:100%;margin-top:12px" onclick="showView('today')">Done editing</button></section>
+<section class="card"><h2 style="font-size:17px;margin-top:0">Privacy & backups</h2><p class="sub">This standalone file has no analytics, advertising, account, or cloud connection. Your habit data is saved in this browser on this device using local storage.</p><div class="row"><button style="flex:1" onclick="exportData()">Export backup</button><button style="flex:1" onclick="document.getElementById('importFile').click()">Import backup</button><input class="hidden" type="file" id="importFile" accept="application/json,.json" onchange="importData(event)"></div><p class="sub warn">Important: if you open this file from different locations or browsers, they may not share the same storage. Do not clear browser website data unless you have exported a backup. Local storage is not encrypted.</p></section>
+<div class="footer">Private by design: the app itself makes no network requests. Browser/OS backup behavior is controlled by your device settings. This file cannot prevent someone with access to your unlocked phone from seeing the tracker.</div>
+</main>
+<script>
+const DEFAULTS=[
+"Wake up and avoid phone for the first 20 minutes",
+"Get ready by 7:30 AM (college day) / wake up by 8:00 AM (no college)",
+"Attend all college sessions",
+"Read a non-academic book for at least 15 minutes",
+"Focused gym session",
+"Drink plenty of water",
+"Hit 100 g of protein",
+"Work on YouTube or Erohsik for 30 minutes",
+"Sleep for at least 7 hours"
+];
+const KEY="rk_private_habit_tracker_v1";
+let state={startDate:new Date().toISOString().slice(0,10),currentDay:1,habits:DEFAULTS.map((label,i)=>({id:i+1,label})),days:{},dayTypes:{}};
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){const s=JSON.parse(raw);if(s&&Array.isArray(s.habits)&&s.days)state={...state,...s};}}catch(e){showNotice("Could not read saved browser data. Export/import backups may help.");}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){showNotice("Saving failed. Export a backup to avoid losing progress.");}}
+function ensureDay(d){if(!state.days[d])state.days[d]={checks:{},submitted:false};return state.days[d];}
+function current(){return ensureDay(state.currentDay);}
+function completedCount(d){return state.habits.filter(h=>ensureDay(d).checks[h.id]===true).length;}
+function pct(d){return state.habits.length?Math.round(completedCount(d)/state.habits.length*100):0;}
+function streak(){let n=0;for(let d=state.currentDay;d>=1;d--){if(state.days[d]?.submitted)n++;else break;}return n;}
+function fmtDate(d){const dt=new Date(state.startDate+"T12:00:00");dt.setDate(dt.getDate()+d-1);return dt.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});}
+function render(){const d=current(),n=completedCount(state.currentDay),p=pct(state.currentDay);document.getElementById("dateLabel").textContent=`Day ${state.currentDay} of 30 · ${fmtDate(state.currentDay)}`;document.getElementById("streak").textContent=streak();document.getElementById("pct").textContent=p+"%";document.getElementById("dailyBar").style.width=p+"%";document.getElementById("count").textContent=`${n} of ${state.habits.length} habits`;const submitted=!!d.submitted;document.getElementById("status").textContent=submitted?"Submitted":p===100?"Ready to submit":"In progress";document.getElementById("submitBtn").disabled=submitted||p!==100;document.getElementById("submitBtn").textContent=submitted?"Day submitted":p===100?"Submit completed day":"Complete all habits to submit";document.getElementById("dayType").value=state.dayTypes[state.currentDay]||"College day";
+document.getElementById("habitList").innerHTML=state.habits.map((h,i)=>`<div class="habit ${d.checks[h.id]?'done':''}"><input type="checkbox" id="h${h.id}" ${d.checks[h.id]?'checked':''} ${submitted?'disabled':''} onchange="toggleHabit(${h.id},this.checked)"><label for="h${h.id}"><span class="num">HABIT ${String(i+1).padStart(2,'0')}</span>${esc(h.label)}</label></div>`).join("");
+const done=Object.keys(state.days).filter(k=>state.days[k]?.submitted).length;document.getElementById("overall").textContent=`${done}/30`;document.getElementById("monthBar").style.width=Math.min(100,done/30*100)+"%";document.getElementById("remaining").textContent=`${30-done} days remaining`;document.getElementById("monthCount").textContent=`${done}/30 submitted`;
+document.getElementById("calendar").innerHTML=Array.from({length:30},(_,i)=>i+1).map(day=>`<button class="day ${state.days[day]?.submitted?'complete':''} ${day===state.currentDay?'current':''}" onclick="goDay(${day})"><small>${esc(fmtDate(day))}</small><strong>${day}</strong><small>${state.days[day]?.submitted?'✓ Done':day===state.currentDay?'Current':'Open'}</small></button>`).join("");
+document.getElementById("editList").innerHTML=state.habits.map((h,i)=>`<div class="editoritem"><div><span class="num">HABIT ${i+1}</span>${esc(h.label)}</div><div class="row"><button onclick="renameHabit(${h.id})">Rename</button><button class="danger" onclick="deleteHabit(${h.id})">Delete</button></div></div>`).join("");
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function toggleHabit(id,v){if(current().submitted)return;current().checks[id]=v;save();render();}
+function submitDay(){const d=current();if(d.submitted)return;if(pct(state.currentDay)!==100){showNotice("Complete every habit before submitting this day.");return;}d.submitted=true;save();render();showNotice(state.currentDay===30?"Challenge complete — congratulations!":"Day submitted and saved on this device.");}
+function resetToday(){if(!confirm("Clear today's checkboxes? Submitted history for this day will also be unsubmitted."))return;const d=current();d.checks={};d.submitted=false;save();render();showNotice("Today's checklist was reset.");}
+function prevDay(){if(state.currentDay>1){state.currentDay--;save();render();}else showNotice("You're already on Day 1.");}
+function nextDay(){if(state.currentDay>=30){showNotice("You're on Day 30.");return;}if(!current().submitted&&!confirm("This day is not submitted. Move to the next day anyway?"))return;state.currentDay++;save();render();showNotice("");}
+function goDay(d){state.currentDay=d;save();render();showView("today");}
+function setDayType(v){state.dayTypes[state.currentDay]=v;save();}
+function showView(v){["today","month","edit"].forEach(k=>document.getElementById(k+"View").classList.toggle("hidden",k!==v));["Today","Month","Edit"].forEach(k=>document.getElementById("tab"+k).classList.toggle("primary",k.toLowerCase()===v));if(v==="edit")render();}
+function showNotice(s){const e=document.getElementById("notice");e.textContent=s;e.classList.toggle("hidden",!s);}
+function renameHabit(id){const h=state.habits.find(x=>x.id===id);if(!h)return;const v=prompt("Edit habit name:",h.label);if(v&&v.trim()){h.label=v.trim();save();render();}}
+function deleteHabit(id){if(!confirm("Delete this habit from the checklist? This changes scoring for the challenge."))return;state.habits=state.habits.filter(x=>x.id!==id);save();render();}
+document.getElementById("addForm").addEventListener("submit",e=>{e.preventDefault();const input=document.getElementById("newHabit"),label=input.value.trim();if(!label)return;state.habits.push({id:Math.max(0,...state.habits.map(h=>h.id))+1,label});input.value="";save();render();showNotice("Habit added.");});
+function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="rk-habit-tracker-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function importData(ev){const file=ev.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);if(!Array.isArray(s.habits)||!s.days)throw Error("Invalid");if(confirm("Replace the current tracker with this backup?")){state=s;save();render();showNotice("Backup imported.");}}catch(e){showNotice("That backup file could not be read.");}ev.target.value="";};r.readAsText(file);}
+load();ensureDay(state.currentDay);save();render();
+</script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }</script>
+</body></html>
