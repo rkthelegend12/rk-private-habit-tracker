@@ -83,6 +83,7 @@ function streak(){
   }
   return n;
 }
+function fmtDate(d){const dt=new Date(state.startDate+"T12:00:00");dt.setDate(dt.getDate()+d-1);return dt.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});}
 function challengeDay(){
   const start=new Date(state.startDate+"T00:00:00");
   const today=new Date();
