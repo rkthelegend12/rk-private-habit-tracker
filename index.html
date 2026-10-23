@@ -59,7 +59,12 @@ const DEFAULTS=[
 "Sleep for at least 7 hours"
 ];
 const KEY="rk_private_habit_tracker_v1";
-let state={startDate:new Date().toISOString().slice(0,10),currentDay:1,habits:DEFAULTS.map((label,i)=>({id:i+1,label})),days:{},dayTypes:{}};
+function localDateKey(){
+  const now=new Date();
+  const y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,"0"),d=String(now.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+let state={startDate:localDateKey(),currentDay:1,habits:DEFAULTS.map((label,i)=>({id:i+1,label})),days:{},dayTypes:{}};
 function load(){try{const raw=localStorage.getItem(KEY);if(raw){const s=JSON.parse(raw);if(s&&Array.isArray(s.habits)&&s.days)state={...state,...s};}}catch(e){showNotice("Could not read saved browser data. Export/import backups may help.");}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){showNotice("Saving failed. Export a backup to avoid losing progress.");}}
 function ensureDay(d){if(!state.days[d])state.days[d]={checks:{},submitted:false};return state.days[d];}
@@ -78,7 +83,13 @@ function streak(){
   }
   return n;
 }
-function fmtDate(d){const dt=new Date(state.startDate+"T12:00:00");dt.setDate(dt.getDate()+d-1);return dt.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});}
+function challengeDay(){
+  const start=new Date(state.startDate+"T00:00:00");
+  const today=new Date();
+  today.setHours(0,0,0,0);
+  const elapsed=Math.floor((today-start)/86400000);
+  return Math.max(1,Math.min(30,elapsed+1));
+}
 function render(){const d=current(),n=completedCount(state.currentDay),p=pct(state.currentDay);document.getElementById("dateLabel").textContent=`Day ${state.currentDay} of 30 · ${fmtDate(state.currentDay)}`;document.getElementById("streak").textContent=streak();document.getElementById("pct").textContent=p+"%";document.getElementById("dailyBar").style.width=p+"%";document.getElementById("count").textContent=`${n} of ${state.habits.length} habits`;const submitted=!!d.submitted;document.getElementById("status").textContent=submitted?"Submitted":p===100?"Ready to submit":"In progress";document.getElementById("submitBtn").disabled=submitted||p!==100;document.getElementById("submitBtn").textContent=submitted?"Day submitted":p===100?"Submit completed day":"Complete all habits to submit";document.getElementById("dayType").value=state.dayTypes[state.currentDay]||"College day";
 document.getElementById("habitList").innerHTML=state.habits.map((h,i)=>`<div class="habit ${d.checks[h.id]?'done':''}"><input type="checkbox" id="h${h.id}" ${d.checks[h.id]?'checked':''} ${submitted?'disabled':''} onchange="toggleHabit(${h.id},this.checked)"><label for="h${h.id}"><span class="num">HABIT ${String(i+1).padStart(2,'0')}</span>${esc(h.label)}</label></div>`).join("");
 const done=Object.keys(state.days).filter(k=>state.days[k]?.submitted).length;document.getElementById("overall").textContent=`${done}/30`;document.getElementById("monthBar").style.width=Math.min(100,done/30*100)+"%";document.getElementById("remaining").textContent=`${30-done} days remaining`;document.getElementById("monthCount").textContent=`${done}/30 submitted`;
@@ -100,6 +111,10 @@ function deleteHabit(id){if(!confirm("Delete this habit from the checklist? This
 document.getElementById("addForm").addEventListener("submit",e=>{e.preventDefault();const input=document.getElementById("newHabit"),label=input.value.trim();if(!label)return;state.habits.push({id:Math.max(0,...state.habits.map(h=>h.id))+1,label});input.value="";save();render();showNotice("Habit added.");});
 function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="rk-habit-tracker-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function importData(ev){const file=ev.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);if(!Array.isArray(s.habits)||!s.days)throw Error("Invalid");if(confirm("Replace the current tracker with this backup?")){state=s;save();render();showNotice("Backup imported.");}}catch(e){showNotice("That backup file could not be read.");}ev.target.value="";};r.readAsText(file);}
-load();ensureDay(state.currentDay);save();render();
+load();
+state.currentDay=challengeDay();
+ensureDay(state.currentDay);
+save();
+render();
 </script><script>if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }</script>
 </body></html>
