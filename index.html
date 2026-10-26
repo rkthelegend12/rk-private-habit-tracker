@@ -111,7 +111,17 @@ function completedCount(d){
 
   return habits.filter(h => day.checks[h.id] === true).length;
 }
-function pct(d){return state.habits.length?Math.round(completedCount(d)/state.habits.length*100):0;}
+function pct(d){
+  const type = state.dayTypes[d] || "College day";
+  const settings = state.typeSettings || {};
+  const selected = settings[type];
+
+  const total = (!Array.isArray(selected) || selected.length === 0)
+    ? state.habits.length
+    : state.habits.filter(h => selected.includes(h.id)).length;
+
+  return total ? Math.round(completedCount(d) / total * 100) : 0;
+}
 function streak(){
   let latest = 0;
   for(let d = 1; d <= 30; d++){
