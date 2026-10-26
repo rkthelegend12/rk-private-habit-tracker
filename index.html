@@ -69,7 +69,20 @@ function localDateKey(){
   const y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,"0"),d=String(now.getDate()).padStart(2,"0");
   return `${y}-${m}-${d}`;
 }
-let state={startDate:localDateKey(),currentDay:1,habits:DEFAULTS.map((label,i)=>({id:i+1,label})),days:{},dayTypes:{}};
+let state={
+  startDate:localDateKey(),
+  currentDay:1,
+  habits:DEFAULTS.map((label,i)=>({id:i+1,label})),
+  days:{},
+  dayTypes:{},
+  typeSettings:{
+    "College day":[],
+    "No college":[],
+    "Business / Event day":[],
+    "Rest day":[]
+  },
+  customDayTypes:[]
+};
 function load(){try{const raw=localStorage.getItem(KEY);if(raw){const s=JSON.parse(raw);if(s&&Array.isArray(s.habits)&&s.days)state={...state,...s};}}catch(e){showNotice("Could not read saved browser data. Export/import backups may help.");}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){showNotice("Saving failed. Export a backup to avoid losing progress.");}}
 function ensureDay(d){if(!state.days[d])state.days[d]={checks:{},submitted:false};return state.days[d];}
