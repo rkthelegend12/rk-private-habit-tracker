@@ -66,27 +66,27 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
     <h2>Day-type settings</h2>
   </div>
 
-  <select id="settingsDayType" onchange="renderTypeSettings()">
-    <option value="College day">College day</option>
-    <option value="No college">No college</option>
-    <option value="Business / Event day">Business / Event day</option>
-    <option value="Rest day">Rest day</option>
-  </select>
+  <div class="row" style="margin-top:12px">
+    <select id="settingsDayType" onchange="renderTypeSettings()">
+      <option value="College day">College day</option>
+      <option value="No college">No college</option>
+      <option value="Business / Event day">Business / Event day</option>
+      <option value="Rest day">Rest day</option>
+    </select>
 
-  <button type="button" class="danger" onclick="deleteDayType()">
-    Delete custom type
-  </button>
-</div>
+    <button type="button" class="danger" onclick="deleteDayType()">
+      Delete custom type
+    </button>
+  </div>
 
-<div id="typeHabitList"></div>
+  <div id="typeHabitList"></div>
 
-<div class="row" style="margin-top:12px">
-  <input id="newDayType" type="text"
-    placeholder="New day type name…"
-    maxlength="60">
-
-  <button type="button" onclick="addDayType()">Add type</button>
-</div>
+  <div class="row" style="margin-top:12px">
+    <input id="newDayType" type="text"
+      placeholder="New day type name…"
+      maxlength="60">
+    <button type="button" onclick="addDayType()">Add type</button>
+  </div>
 
   <button style="width:100%;margin-top:12px" onclick="showView('today')">Done editing</button>
 </section>
