@@ -47,7 +47,24 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
  <div class="row" style="margin-top:9px"><button style="flex:1" onclick="resetToday()">Reset today</button><button style="flex:1" onclick="prevDay()">← Previous</button><button style="flex:1" onclick="nextDay()">Next →</button></div>
 </section>
 <section id="monthView" class="card hidden"><div class="sectionhead"><h2>30-day journey</h2><span class="muted" id="monthCount">0/30 submitted</span></div><p class="sub">Green days are submitted. Tap a day to open it.</p><div id="calendar" class="calendar"></div></section>
-<section id="editView" class="card hidden"><div class="sectionhead"><h2>Manage habits</h2><span class="muted">Edit anytime</span></div><p class="sub">Changes apply to your checklist. Keep the habits meaningful and measurable.</p><div id="editList"></div><form id="addForm" class="row" style="margin-top:12px"><input id="newHabit" type="text" placeholder="Add a new habit…" maxlength="180" required><button class="primary" type="submit">Add</button></form><button style="width:100%;margin-top:12px" onclick="showView('today')">Done editing</button></section>
+<section id="editView" class="card hidden"><div class="sectionhead"><h2>Manage habits</h2><span class="muted">Edit anytime</span></div><p class="sub">Changes apply to your checklist. Keep the habits meaningful and measurable.</p></div>
+<p class="sub">Choose a day type and select the habits that apply to it.</p>
+
+<div class="row" style="margin-bottom:12px">
+  <select id="settingsDayType" onchange="renderTypeSettings()">
+    <option value="College day">College day</option>
+    <option value="No college">No college</option>
+    <option value="Business / Event day">Business / Event day</option>
+    <option value="Rest day">Rest day</option>
+  </select>
+</div>
+
+<div id="typeHabitList"></div>
+
+<div class="row" style="margin-top:12px">
+  <input id="newDayType" type="text" placeholder="New day type name…" maxlength="60">
+  <button type="button" onclick="addDayType()">Add type</button>
+</div>
 <section class="card"><h2 style="font-size:17px;margin-top:0">Privacy & backups</h2><p class="sub">This standalone file has no analytics, advertising, account, or cloud connection. Your habit data is saved in this browser on this device using local storage.</p><div class="row"><button style="flex:1" onclick="exportData()">Export backup</button><button style="flex:1" onclick="document.getElementById('importFile').click()">Import backup</button><input class="hidden" type="file" id="importFile" accept="application/json,.json" onchange="importData(event)"></div><p class="sub warn">Important: if you open this file from different locations or browsers, they may not share the same storage. Do not clear browser website data unless you have exported a backup. Local storage is not encrypted.</p></section>
 <div class="footer">Private by design: the app itself makes no network requests. Browser/OS backup behavior is controlled by your device settings. This file cannot prevent someone with access to your unlocked phone from seeing the tracker.</div>
 </main>
