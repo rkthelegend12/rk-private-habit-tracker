@@ -36,7 +36,12 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
 <div id="notice" class="notice hidden" role="status"></div>
 <section id="todayView" class="card">
  <div class="sectionhead"><h2>Today's habits</h2><span id="status" class="muted">In progress</span></div><p class="sub">Tap each checkbox as you complete a habit.</p>
- <div class="row" style="margin:12px 0"><label for="dayType" class="muted" style="min-width:85px">Day type</label><select id="dayType" onchange="setDayType(this.value)"><option>College day</option><option>No college</option></select></div>
+ <div class="row" style="margin:12px 0"><label for="dayType" class="muted" style="min-width:85px">Day type</label><select id="dayType" onchange="setDayType(this.value)">
+  <option value="College day">College day</option>
+  <option value="No college">No college</option>
+  <option value="Business / Event day">Business / Event day</option>
+  <option value="Rest day">Rest day</option>
+</select></div>
  <div id="habitList"></div>
  <button id="submitBtn" class="success" style="width:100%;margin-top:16px" onclick="submitDay()">Submit completed day</button>
  <div class="row" style="margin-top:9px"><button style="flex:1" onclick="resetToday()">Reset today</button><button style="flex:1" onclick="prevDay()">← Previous</button><button style="flex:1" onclick="nextDay()">Next →</button></div>
