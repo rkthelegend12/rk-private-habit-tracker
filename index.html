@@ -143,7 +143,18 @@ function challengeDay(){
   return Math.max(1,Math.min(30,elapsed+1));
 }
 function render(){const d=current(),n=completedCount(state.currentDay),p=pct(state.currentDay);document.getElementById("dateLabel").textContent=`Day ${state.currentDay} of 30 · ${fmtDate(state.currentDay)}`;document.getElementById("streak").textContent=streak();document.getElementById("pct").textContent=p+"%";document.getElementById("dailyBar").style.width=p+"%";document.getElementById("count").textContent=`${n} of ${state.habits.length} habits`;const submitted=!!d.submitted;document.getElementById("status").textContent=submitted?"Submitted":p===100?"Ready to submit":"In progress";document.getElementById("submitBtn").disabled=submitted||p!==100;document.getElementById("submitBtn").textContent=submitted?"Day submitted":p===100?"Submit completed day":"Complete all habits to submit";document.getElementById("dayType").value=state.dayTypes[state.currentDay]||"College day";
-document.getElementById("habitList").innerHTML=state.habits.map((h,i)=>`<div class="habit ${d.checks[h.id]?'done':''}"><input type="checkbox" id="h${h.id}" ${d.checks[h.id]?'checked':''} ${submitted?'disabled':''} onchange="toggleHabit(${h.id},this.checked)"><label for="h${h.id}"><span class="num">HABIT ${String(i+1).padStart(2,'0')}</span>${esc(h.label)}</label></div>`).join("");
+const activeHabits = enabledHabits();
+document.getElementById("habitList").innerHTML = activeHabits.map((h,i) =>
+  `<div class="habit ${d.checks[h.id]?'done':''}">
+    <input type="checkbox" id="h${h.id}" ${d.checks[h.id]?'checked':''}
+    ${submitted?'disabled':''}
+    onchange="toggleHabit(${h.id},this.checked)">
+    <label for="h${h.id}">
+      <span class="num">HABIT ${String(i+1).padStart(2,'0')}</span>
+      ${esc(h.label)}
+    </label>
+  </div>`
+).join("");
 const done=Object.keys(state.days).filter(k=>state.days[k]?.submitted).length;document.getElementById("overall").textContent=`${done}/30`;document.getElementById("monthBar").style.width=Math.min(100,done/30*100)+"%";document.getElementById("remaining").textContent=`${30-done} days remaining`;document.getElementById("monthCount").textContent=`${done}/30 submitted`;
 document.getElementById("calendar").innerHTML=Array.from({length:30},(_,i)=>i+1).map(day=>`<button class="day ${state.days[day]?.submitted?'complete':''} ${day===state.currentDay?'current':''}" onclick="goDay(${day})"><small>${esc(fmtDate(day))}</small><strong>${day}</strong><small>${state.days[day]?.submitted?'✓ Done':day===state.currentDay?'Current':'Open'}</small></button>`).join("");
 document.getElementById("editList").innerHTML=state.habits.map((h,i)=>`<div class="editoritem"><div><span class="num">HABIT ${i+1}</span>${esc(h.label)}</div><div class="row"><button onclick="renameHabit(${h.id})">Rename</button><button class="danger" onclick="deleteHabit(${h.id})">Delete</button></div></div>`).join("");
