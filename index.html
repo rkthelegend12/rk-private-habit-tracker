@@ -47,24 +47,49 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
  <div class="row" style="margin-top:9px"><button style="flex:1" onclick="resetToday()">Reset today</button><button style="flex:1" onclick="prevDay()">← Previous</button><button style="flex:1" onclick="nextDay()">Next →</button></div>
 </section>
 <section id="monthView" class="card hidden"><div class="sectionhead"><h2>30-day journey</h2><span class="muted" id="monthCount">0/30 submitted</span></div><p class="sub">Green days are submitted. Tap a day to open it.</p><div id="calendar" class="calendar"></div></section>
-<section id="editView" class="card hidden"><div class="sectionhead"><h2>Manage habits</h2><span class="muted">Edit anytime</span></div><p class="sub">Changes apply to your checklist. Keep the habits meaningful and measurable.</p></div>
-<p class="sub">Choose a day type and select the habits that apply to it.</p>
+<section id="editView" class="card hidden">
+  <div class="sectionhead">
+    <h2>Manage habits</h2>
+    <span class="muted">Edit anytime</span>
+  </div>
 
-<div class="row" style="margin-bottom:12px">
+  <p class="sub">Manage your habits and choose which ones apply to each day type.</p>
+
+  <div id="editList"></div>
+
+  <form id="addForm" class="row" style="margin-top:12px">
+    <input id="newHabit" type="text" placeholder="Add a new habit…" maxlength="180" required>
+    <button class="primary" type="submit">Add</button>
+  </form>
+
+  <div class="sectionhead" style="margin-top:22px">
+    <h2>Day-type settings</h2>
+  </div>
+
   <select id="settingsDayType" onchange="renderTypeSettings()">
     <option value="College day">College day</option>
     <option value="No college">No college</option>
     <option value="Business / Event day">Business / Event day</option>
     <option value="Rest day">Rest day</option>
   </select>
+
+  <button type="button" class="danger" onclick="deleteDayType()">
+    Delete custom type
+  </button>
 </div>
 
 <div id="typeHabitList"></div>
 
 <div class="row" style="margin-top:12px">
-  <input id="newDayType" type="text" placeholder="New day type name…" maxlength="60">
+  <input id="newDayType" type="text"
+    placeholder="New day type name…"
+    maxlength="60">
+
   <button type="button" onclick="addDayType()">Add type</button>
 </div>
+
+  <button style="width:100%;margin-top:12px" onclick="showView('today')">Done editing</button>
+</section>
 <section class="card"><h2 style="font-size:17px;margin-top:0">Privacy & backups</h2><p class="sub">This standalone file has no analytics, advertising, account, or cloud connection. Your habit data is saved in this browser on this device using local storage.</p><div class="row"><button style="flex:1" onclick="exportData()">Export backup</button><button style="flex:1" onclick="document.getElementById('importFile').click()">Import backup</button><input class="hidden" type="file" id="importFile" accept="application/json,.json" onchange="importData(event)"></div><p class="sub warn">Important: if you open this file from different locations or browsers, they may not share the same storage. Do not clear browser website data unless you have exported a backup. Local storage is not encrypted.</p></section>
 <div class="footer">Private by design: the app itself makes no network requests. Browser/OS backup behavior is controlled by your device settings. This file cannot prevent someone with access to your unlocked phone from seeing the tracker.</div>
 </main>
@@ -92,52 +117,88 @@ let state={
   habits:DEFAULTS.map((label,i)=>({id:i+1,label})),
   days:{},
   dayTypes:{},
-  typeSettings:{
-    "College day":[],
-    "No college":[],
-    "Business / Event day":[],
-    "Rest day":[]
-  },
+  typeSettings:{},
   customDayTypes:[]
 };
-function load(){try{const raw=localStorage.getItem(KEY);if(raw){const s=JSON.parse(raw);if(s&&Array.isArray(s.habits)&&s.days)state={...state,...s};}}catch(e){showNotice("Could not read saved browser data. Export/import backups may help.");}}
+function load(){
+  try {
+    const raw = localStorage.getItem(KEY);
+
+    if(raw){
+      const s = JSON.parse(raw);
+
+      if(s && Array.isArray(s.habits) && s.days){
+        state = {...state, ...s};
+      }
+    }
+  } catch(e) {
+    showNotice("Could not read saved browser data. Export/import backups may help.");
+  }
+
+  state.typeSettings =
+    state.typeSettings && typeof state.typeSettings === "object"
+      ? state.typeSettings
+      : {};
+
+  state.customDayTypes = Array.isArray(state.customDayTypes)
+    ? state.customDayTypes
+    : [];
+
+  const builtInTypes = [
+    "College day",
+    "No college",
+    "Business / Event day",
+    "Rest day"
+  ];
+
+  // Migrate older settings without changing saved habit or day data.
+  if(!state.typeSettingsVersion){
+    builtInTypes.forEach(type => {
+      state.typeSettings[type] = state.habits.map(h => h.id);
+    });
+
+    state.typeSettingsVersion = 1;
+  }
+
+  // Give any newly added day type all habits by default.
+  [...builtInTypes, ...state.customDayTypes].forEach(type => {
+    if(!Array.isArray(state.typeSettings[type])){
+      state.typeSettings[type] = state.habits.map(h => h.id);
+    }
+  });
+}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){showNotice("Saving failed. Export a backup to avoid losing progress.");}}
 function ensureDay(d){if(!state.days[d])state.days[d]={checks:{},submitted:false};return state.days[d];}
 function current(){return ensureDay(state.currentDay);}
-function enabledHabits(){
-  const type = state.dayTypes[state.currentDay] || "College day";
+function habitsForDay(d){
+  const type = state.dayTypes[d] || "College day";
   const settings = state.typeSettings || {};
   const selected = settings[type];
 
-  if(!Array.isArray(selected) || selected.length === 0){
+  if(!Array.isArray(selected)){
     return state.habits;
   }
 
   return state.habits.filter(h => selected.includes(h.id));
 }
 
+function enabledHabits(){
+  return habitsForDay(state.currentDay);
+}
+
 function completedCount(d){
   const day = ensureDay(d);
-  const type = state.dayTypes[d] || "College day";
-  const settings = state.typeSettings || {};
-  const selected = settings[type];
-
-  const habits = (!Array.isArray(selected) || selected.length === 0)
-    ? state.habits
-    : state.habits.filter(h => selected.includes(h.id));
-
-  return habits.filter(h => day.checks[h.id] === true).length;
+  return habitsForDay(d).filter(h => day.checks[h.id] === true).length;
 }
+
 function pct(d){
-  const type = state.dayTypes[d] || "College day";
-  const settings = state.typeSettings || {};
-  const selected = settings[type];
+  const total = habitsForDay(d).length;
 
-  const total = (!Array.isArray(selected) || selected.length === 0)
-    ? state.habits.length
-    : state.habits.filter(h => selected.includes(h.id)).length;
+  if(total === 0){
+    return 100;
+  }
 
-  return total ? Math.round(completedCount(d) / total * 100) : 0;
+  return Math.round(completedCount(d) / total * 100);
 }
 function streak(){
   let latest = 0;
@@ -159,8 +220,8 @@ function challengeDay(){
   const elapsed=Math.floor((today-start)/86400000);
   return Math.max(1,Math.min(30,elapsed+1));
 }
-function render(){const d=current(),n=completedCount(state.currentDay),p=pct(state.currentDay);document.getElementById("dateLabel").textContent=`Day ${state.currentDay} of 30 · ${fmtDate(state.currentDay)}`;document.getElementById("streak").textContent=streak();document.getElementById("pct").textContent=p+"%";document.getElementById("dailyBar").style.width=p+"%";document.getElementById("count").textContent=`${n} of ${enabledHabits().length} habits`;const submitted=!!d.submitted;document.getElementById("status").textContent=submitted?"Submitted":p===100?"Ready to submit":"In progress";document.getElementById("submitBtn").disabled=submitted||p!==100;document.getElementById("submitBtn").textContent=submitted?"Day submitted":p===100?"Submit completed day":"Complete all habits to submit";document.getElementById("dayType").value=state.dayTypes[state.currentDay]||"College day";
-const activeHabits = enabledHabits();
+function render(){const d=current(),n=completedCount(state.currentDay),p=pct(state.currentDay);document.getElementById("dateLabel").textContent=`Day ${state.currentDay} of 30 · ${fmtDate(state.currentDay)}`;document.getElementById("streak").textContent=streak();document.getElementById("pct").textContent=p+"%";document.getElementById("dailyBar").style.width=p+"%";document.getElementById("count").textContent=`${n} of ${enabledHabits().length} habits`;const submitted=!!d.submitted;document.getElementById("status").textContent=submitted?"Submitted":p===100?"Ready to submit":"In progress";document.getElementById("submitBtn").disabled=submitted||p!==100;document.getElementById("submitBtn").textContent=submitted?"Day submitted":p===100?"Submit completed day":"Complete all habits to submit";renderDayTypeOptions();
+renderTypeSettings();
 document.getElementById("habitList").innerHTML = activeHabits.map((h,i) =>
   `<div class="habit ${d.checks[h.id]?'done':''}">
     <input type="checkbox" id="h${h.id}" ${d.checks[h.id]?'checked':''}
@@ -184,9 +245,144 @@ function prevDay(){if(state.currentDay>1){state.currentDay--;save();render();}el
 function nextDay(){if(state.currentDay>=30){showNotice("You're on Day 30.");return;}if(!current().submitted&&!confirm("This day is not submitted. Move to the next day anyway?"))return;state.currentDay++;save();render();showNotice("");}
 function goDay(d){state.currentDay=d;save();render();showView("today");}
 function setDayType(v){
+  const types = allDayTypes();
+
+  if(!types.includes(v)){
+    v = "College day";
+  }
+
   state.dayTypes[state.currentDay] = v;
   save();
   render();
+}
+
+function allDayTypes(){
+  return [
+    "College day",
+    "No college",
+    "Business / Event day",
+    "Rest day",
+    ...state.customDayTypes
+  ];
+}
+
+function renderDayTypeOptions(){
+  const select = document.getElementById("dayType");
+  const settingsSelect = document.getElementById("settingsDayType");
+  const types = allDayTypes();
+  const selected = state.dayTypes[state.currentDay] || "College day";
+
+  select.innerHTML = types.map(type =>
+    `<option value="${esc(type)}">${esc(type)}</option>`
+  ).join("");
+
+  select.value = types.includes(selected) ? selected : "College day";
+
+  if(settingsSelect){
+    const previous = settingsSelect.value;
+    settingsSelect.innerHTML = types.map(type =>
+      `<option value="${esc(type)}">${esc(type)}</option>`
+    ).join("");
+
+    settingsSelect.value = types.includes(previous) ? previous : "College day";
+  }
+}
+
+function renderTypeSettings(){
+  const select = document.getElementById("settingsDayType");
+  const list = document.getElementById("typeHabitList");
+
+  if(!select || !list) return;
+
+  const type = select.value;
+  const selectedIds = state.typeSettings[type] || [];
+
+  list.innerHTML = state.habits.map(h => `
+    <label class="habit">
+      <input type="checkbox"
+        ${selectedIds.includes(h.id) ? "checked" : ""}
+        onchange="toggleTypeHabit('${esc(type)}',${h.id},this.checked)">
+      ${esc(h.label)}
+    </label>
+  `).join("");
+}
+
+function toggleTypeHabit(type,id,checked){
+  if(!Array.isArray(state.typeSettings[type])){
+    state.typeSettings[type] = state.habits.map(h => h.id);
+  }
+
+  if(checked){
+    if(!state.typeSettings[type].includes(id)){
+      state.typeSettings[type].push(id);
+    }
+  }else{
+    state.typeSettings[type] = state.typeSettings[type].filter(
+      habitId => habitId !== id
+    );
+  }
+
+  save();
+  renderTypeSettings();
+  render();
+}
+
+function addDayType(){
+  const input = document.getElementById("newDayType");
+  const name = input.value.trim();
+
+  if(!name){
+    showNotice("Enter a name for your new day type.");
+    return;
+  }
+
+  if(allDayTypes().some(type => type.toLowerCase() === name.toLowerCase())){
+    showNotice("That day type already exists.");
+    return;
+  }
+
+  state.customDayTypes.push(name);
+  state.typeSettings[name] = state.habits.map(h => h.id);
+  input.value = "";
+
+  save();
+  renderDayTypeOptions();
+  renderTypeSettings();
+  render();
+  showNotice("New day type added.");
+}
+
+function deleteDayType(){
+  const select = document.getElementById("settingsDayType");
+  const type = select.value;
+  const builtInTypes = [
+    "College day",
+    "No college",
+    "Business / Event day",
+    "Rest day"
+  ];
+
+  if(builtInTypes.includes(type)){
+    showNotice("The four standard day types cannot be deleted.");
+    return;
+  }
+
+  if(!confirm(`Delete the day type "${type}"?`)) return;
+
+  state.customDayTypes = state.customDayTypes.filter(item => item !== type);
+  delete state.typeSettings[type];
+
+  Object.keys(state.dayTypes).forEach(day => {
+    if(state.dayTypes[day] === type){
+      state.dayTypes[day] = "College day";
+    }
+  });
+
+  save();
+  renderDayTypeOptions();
+  renderTypeSettings();
+  render();
+  showNotice("Day type deleted.");
 }
 function showView(v){["today","month","edit"].forEach(k=>document.getElementById(k+"View").classList.toggle("hidden",k!==v));["Today","Month","Edit"].forEach(k=>document.getElementById("tab"+k).classList.toggle("primary",k.toLowerCase()===v));if(v==="edit")render();}
 function showNotice(s){const e=document.getElementById("notice");e.textContent=s;e.classList.toggle("hidden",!s);}
