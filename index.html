@@ -109,7 +109,11 @@ function resetToday(){if(!confirm("Clear today's checkboxes? Submitted history f
 function prevDay(){if(state.currentDay>1){state.currentDay--;save();render();}else showNotice("You're already on Day 1.");}
 function nextDay(){if(state.currentDay>=30){showNotice("You're on Day 30.");return;}if(!current().submitted&&!confirm("This day is not submitted. Move to the next day anyway?"))return;state.currentDay++;save();render();showNotice("");}
 function goDay(d){state.currentDay=d;save();render();showView("today");}
-function setDayType(v){state.dayTypes[state.currentDay]=v;save();}
+function setDayType(v){
+  state.dayTypes[state.currentDay] = v;
+  save();
+  render();
+}
 function showView(v){["today","month","edit"].forEach(k=>document.getElementById(k+"View").classList.toggle("hidden",k!==v));["Today","Month","Edit"].forEach(k=>document.getElementById("tab"+k).classList.toggle("primary",k.toLowerCase()===v));if(v==="edit")render();}
 function showNotice(s){const e=document.getElementById("notice");e.textContent=s;e.classList.toggle("hidden",!s);}
 function renameHabit(id){const h=state.habits.find(x=>x.id===id);if(!h)return;const v=prompt("Edit habit name:",h.label);if(v&&v.trim()){h.label=v.trim();save();render();}}
