@@ -87,7 +87,30 @@ function load(){try{const raw=localStorage.getItem(KEY);if(raw){const s=JSON.par
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){showNotice("Saving failed. Export a backup to avoid losing progress.");}}
 function ensureDay(d){if(!state.days[d])state.days[d]={checks:{},submitted:false};return state.days[d];}
 function current(){return ensureDay(state.currentDay);}
-function completedCount(d){return state.habits.filter(h=>ensureDay(d).checks[h.id]===true).length;}
+function enabledHabits(){
+  const type = state.dayTypes[state.currentDay] || "College day";
+  const settings = state.typeSettings || {};
+  const selected = settings[type];
+
+  if(!Array.isArray(selected) || selected.length === 0){
+    return state.habits;
+  }
+
+  return state.habits.filter(h => selected.includes(h.id));
+}
+
+function completedCount(d){
+  const day = ensureDay(d);
+  const type = state.dayTypes[d] || "College day";
+  const settings = state.typeSettings || {};
+  const selected = settings[type];
+
+  const habits = (!Array.isArray(selected) || selected.length === 0)
+    ? state.habits
+    : state.habits.filter(h => selected.includes(h.id));
+
+  return habits.filter(h => day.checks[h.id] === true).length;
+}
 function pct(d){return state.habits.length?Math.round(completedCount(d)/state.habits.length*100):0;}
 function streak(){
   let latest = 0;
