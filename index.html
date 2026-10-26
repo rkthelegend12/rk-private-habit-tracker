@@ -239,8 +239,7 @@ function render(){
     submitted ? "Day submitted" :
     p === 100 ? "Submit completed day" : "Complete all habits to submit";
 
-  renderDayTypeOptions();
-  renderTypeSettings();
+
 
   document.getElementById("habitList").innerHTML = activeHabits.map((h,i) =>
     `<div class="habit ${d.checks[h.id] ? 'done' : ''}">
@@ -280,6 +279,9 @@ function render(){
       </div>
     </div>`
   ).join("");
+
+  renderDayTypeOptions();
+  renderTypeSettings();
 }
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function toggleHabit(id,v){if(current().submitted)return;current().checks[id]=v;save();render();}
