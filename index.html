@@ -193,11 +193,7 @@ function completedCount(d){
 
 function pct(d){
   const total = habitsForDay(d).length;
-
-  if(total === 0){
-    return 100;
-  }
-
+  if(total === 0) return 100;
   return Math.round(completedCount(d) / total * 100);
 }
 function streak(){
@@ -220,22 +216,70 @@ function challengeDay(){
   const elapsed=Math.floor((today-start)/86400000);
   return Math.max(1,Math.min(30,elapsed+1));
 }
-function render(){const d=current(),n=completedCount(state.currentDay),p=pct(state.currentDay);document.getElementById("dateLabel").textContent=`Day ${state.currentDay} of 30 · ${fmtDate(state.currentDay)}`;document.getElementById("streak").textContent=streak();document.getElementById("pct").textContent=p+"%";document.getElementById("dailyBar").style.width=p+"%";document.getElementById("count").textContent=`${n} of ${enabledHabits().length} habits`;const submitted=!!d.submitted;document.getElementById("status").textContent=submitted?"Submitted":p===100?"Ready to submit":"In progress";document.getElementById("submitBtn").disabled=submitted||p!==100;document.getElementById("submitBtn").textContent=submitted?"Day submitted":p===100?"Submit completed day":"Complete all habits to submit";renderDayTypeOptions();
-renderTypeSettings();
-document.getElementById("habitList").innerHTML = activeHabits.map((h,i) =>
-  `<div class="habit ${d.checks[h.id]?'done':''}">
-    <input type="checkbox" id="h${h.id}" ${d.checks[h.id]?'checked':''}
-    ${submitted?'disabled':''}
-    onchange="toggleHabit(${h.id},this.checked)">
-    <label for="h${h.id}">
-      <span class="num">HABIT ${String(i+1).padStart(2,'0')}</span>
-      ${esc(h.label)}
-    </label>
-  </div>`
-).join("");
-const done=Object.keys(state.days).filter(k=>state.days[k]?.submitted).length;document.getElementById("overall").textContent=`${done}/30`;document.getElementById("monthBar").style.width=Math.min(100,done/30*100)+"%";document.getElementById("remaining").textContent=`${30-done} days remaining`;document.getElementById("monthCount").textContent=`${done}/30 submitted`;
-document.getElementById("calendar").innerHTML=Array.from({length:30},(_,i)=>i+1).map(day=>`<button class="day ${state.days[day]?.submitted?'complete':''} ${day===state.currentDay?'current':''}" onclick="goDay(${day})"><small>${esc(fmtDate(day))}</small><strong>${day}</strong><small>${state.days[day]?.submitted?'✓ Done':day===state.currentDay?'Current':'Open'}</small></button>`).join("");
-document.getElementById("editList").innerHTML=state.habits.map((h,i)=>`<div class="editoritem"><div><span class="num">HABIT ${i+1}</span>${esc(h.label)}</div><div class="row"><button onclick="renameHabit(${h.id})">Rename</button><button class="danger" onclick="deleteHabit(${h.id})">Delete</button></div></div>`).join("");
+function render(){
+  const d = current();
+  const activeHabits = enabledHabits();
+  const n = completedCount(state.currentDay);
+  const p = pct(state.currentDay);
+
+  document.getElementById("dateLabel").textContent =
+    `Day ${state.currentDay} of 30 · ${fmtDate(state.currentDay)}`;
+  document.getElementById("streak").textContent = streak();
+  document.getElementById("pct").textContent = p + "%";
+  document.getElementById("dailyBar").style.width = p + "%";
+  document.getElementById("count").textContent =
+    `${n} of ${activeHabits.length} habits`;
+
+  const submitted = !!d.submitted;
+  document.getElementById("status").textContent =
+    submitted ? "Submitted" : p === 100 ? "Ready to submit" : "In progress";
+
+  document.getElementById("submitBtn").disabled = submitted || p !== 100;
+  document.getElementById("submitBtn").textContent =
+    submitted ? "Day submitted" :
+    p === 100 ? "Submit completed day" : "Complete all habits to submit";
+
+  renderDayTypeOptions();
+  renderTypeSettings();
+
+  document.getElementById("habitList").innerHTML = activeHabits.map((h,i) =>
+    `<div class="habit ${d.checks[h.id] ? 'done' : ''}">
+      <input type="checkbox" id="h${h.id}"
+        ${d.checks[h.id] ? 'checked' : ''}
+        ${submitted ? 'disabled' : ''}
+        onchange="toggleHabit(${h.id},this.checked)">
+      <label for="h${h.id}">
+        <span class="num">HABIT ${String(i+1).padStart(2,'0')}</span>
+        ${esc(h.label)}
+      </label>
+    </div>`
+  ).join("");
+
+  const done = Object.keys(state.days).filter(k => state.days[k]?.submitted).length;
+  document.getElementById("overall").textContent = `${done}/30`;
+  document.getElementById("monthBar").style.width = Math.min(100,done/30*100) + "%";
+  document.getElementById("remaining").textContent = `${30-done} days remaining`;
+  document.getElementById("monthCount").textContent = `${done}/30 submitted`;
+
+  document.getElementById("calendar").innerHTML =
+    Array.from({length:30},(_,i) => i+1).map(day =>
+      `<button class="day ${state.days[day]?.submitted ? 'complete' : ''} ${day===state.currentDay ? 'current' : ''}"
+        onclick="goDay(${day})">
+        <small>${esc(fmtDate(day))}</small>
+        <strong>${day}</strong>
+        <small>${state.days[day]?.submitted ? '✓ Done' : day===state.currentDay ? 'Current' : 'Open'}</small>
+      </button>`
+    ).join("");
+
+  document.getElementById("editList").innerHTML = state.habits.map((h,i) =>
+    `<div class="editoritem">
+      <div><span class="num">HABIT ${i+1}</span>${esc(h.label)}</div>
+      <div class="row">
+        <button onclick="renameHabit(${h.id})">Rename</button>
+        <button class="danger" onclick="deleteHabit(${h.id})">Delete</button>
+      </div>
+    </div>`
+  ).join("");
 }
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function toggleHabit(id,v){if(current().submitted)return;current().checks[id]=v;save();render();}
