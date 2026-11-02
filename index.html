@@ -54,6 +54,20 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
   </div>
 
   <p class="sub">Manage your habits and choose which ones apply to each day type.</p>
+ <div class="sectionhead" style="margin-top:20px">
+  <h2>Challenge schedule</h2>
+</div>
+
+<p class="sub">Choose when your 30-day challenge begins.</p>
+
+<div class="row" style="margin-top:12px">
+  <input id="challengeStartDate" type="date">
+  <button type="button" class="primary" onclick="applyChallengeStartDate()">
+    Set start date
+  </button>
+</div>
+
+<p class="sub" id="challengeEndDate"></p>
 
   <div id="editList"></div>
 
@@ -216,6 +230,54 @@ function challengeDay(){
   const elapsed=Math.floor((today-start)/86400000);
   return Math.max(1,Math.min(30,elapsed+1));
 }
+function renderChallengeSchedule(){
+  const input = document.getElementById("challengeStartDate");
+  const endLabel = document.getElementById("challengeEndDate");
+
+  if(!input || !endLabel) return;
+
+  input.value = state.startDate;
+
+  const end = new Date(state.startDate + "T12:00:00");
+  end.setDate(end.getDate() + 29);
+
+  endLabel.textContent =
+    "Challenge ends: " +
+    end.toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+}
+
+function applyChallengeStartDate(){
+  const input = document.getElementById("challengeStartDate");
+  const newDate = input.value;
+
+  if(!newDate || !/^\d{4}-\d{2}-\d{2}$/.test(newDate)){
+    showNotice("Please select a valid start date.");
+    return;
+  }
+
+  if(newDate === state.startDate){
+    showNotice("This is already your challenge start date.");
+    return;
+  }
+
+  if(!confirm(
+    "Changing the start date will shift the calendar dates for all 30 challenge days. Your existing habit checkmarks and submissions will remain attached to their original challenge-day numbers. Continue?"
+  )){
+    renderChallengeSchedule();
+    return;
+  }
+
+  state.startDate = newDate;
+  state.currentDay = challengeDay();
+
+  ensureDay(state.currentDay);
+  save();
+  render();
+
 function render(){
   const d = current();
   const activeHabits = enabledHabits();
@@ -282,6 +344,7 @@ function render(){
 
   renderDayTypeOptions();
   renderTypeSettings();
+ renderChallengeSchedule();
 }
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function toggleHabit(id,v){if(current().submitted)return;current().checks[id]=v;save();render();}
