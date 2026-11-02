@@ -278,6 +278,9 @@ function applyChallengeStartDate(){
   save();
   render();
 
+  showNotice("Challenge start date updated successfully.");
+}
+
 function render(){
   const d = current();
   const activeHabits = enabledHabits();
