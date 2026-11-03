@@ -101,7 +101,7 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
 
 <label class="muted" for="challengeStartDate">Start date</label>
 <div class="row" style="margin-top:6px">
-  <input id="challengeStartDate" type="date">
+ <input id="challengeStartDate" type="date" onchange="updateChallengePreview()">
 </div>
 
 <label class="muted" for="challengeDuration" style="display:block;margin-top:12px">
@@ -118,8 +118,9 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
 
 <div id="customDurationRow" class="hidden" style="margin-top:10px">
   <label class="muted" for="customChallengeDays">Custom duration (1–365 days)</label>
-  <input id="customChallengeDays" type="number"
-    min="1" max="365" step="1" placeholder="Enter number of days">
+ <input id="customChallengeDays" type="number"
+  min="1" max="365" step="1" placeholder="Enter number of days"
+  oninput="updateChallengePreview()">
 </div>
 
 <button type="button" class="primary"
