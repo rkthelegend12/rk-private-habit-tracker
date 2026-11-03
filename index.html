@@ -72,7 +72,18 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
  <button id="submitBtn" class="success" style="width:100%;margin-top:16px" onclick="submitDay()">Submit completed day</button>
  <div class="row" style="margin-top:9px"><button style="flex:1" onclick="resetToday()">Reset today</button><button style="flex:1" onclick="prevDay()">← Previous</button><button style="flex:1" onclick="nextDay()">Next →</button></div>
 </section>
-<section id="monthView" class="card hidden"><div class="sectionhead"><h2>30-day journey</h2><span class="muted" id="monthCount">0/30 submitted</span></div><p class="sub">Green days are submitted. Tap a day to open it.</p><div id="calendar" class="calendar"></div></section>
+<section id="monthView" class="card hidden">
+  <div class="sectionhead">
+    <h2 id="journeyTitle">30-day journey</h2>
+    <span class="muted" id="monthCount">0/30 submitted</span>
+  </div>
+  <p class="sub">
+    Green = Submitted · Orange = Not submitted ·
+    Blue outline = Current · Dark = Upcoming.
+    Tap a day to open it.
+  </p>
+  <div id="calendar" class="calendar"></div>
+</section>
 <section id="editView" class="card hidden">
   <div class="sectionhead">
     <h2>Manage habits</h2>
