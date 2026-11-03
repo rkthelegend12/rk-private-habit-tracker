@@ -22,7 +22,9 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
 .habit{display:flex;gap:12px;align-items:flex-start;padding:14px 2px;border-bottom:1px solid var(--line)}.habit:last-child{border-bottom:0}.habit input{width:23px;height:23px;accent-color:var(--green);flex-shrink:0;margin-top:2px}.habit label{line-height:1.42;flex:1}.habit.done label{text-decoration:line-through;color:var(--muted)}.num{font-size:11px;color:var(--muted);display:block;margin-bottom:3px}
 .row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.row input,.row select,input[type=text]{width:100%;background:#0e1527;border:1px solid var(--line);color:var(--text);padding:12px;border-radius:12px}
 .sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px}.sectionhead h2{margin:0;font-size:18px}.muted{color:var(--muted);font-size:13px}.hidden{display:none!important}
-.calendar{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}.day{min-height:64px;padding:8px 3px;border-radius:13px;text-align:center;border:1px solid var(--line);background:#10172a}.day strong{display:block;font-size:16px;margin:4px}.day small{font-size:10px;color:var(--muted)}.day.complete{background:#064e3b;border-color:#047857}.day.current{outline:2px solid var(--blue)}
+.calendar{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}.day{min-height:64px;padding:8px 3px;border-radius:13px;text-align:center;border:1px solid var(--line);background:#10172a}.day strong{display:block;font-size:16px;margin:4px}.day small{font-size:10px;color:var(--muted)}.day.complete{background:#064e3b;border-color:#047857}
+.day.missed{background:#3b2517;border-color:#c2410c}
+.day.current{outline:2px solid var(--blue)}
 .editoritem{border:1px solid var(--line);padding:12px;border-radius:14px;margin:9px 0}.editoritem .row{margin-top:8px}.notice{padding:12px;border-radius:12px;background:#1e293b;color:#dbeafe;font-size:13px;margin:10px 0}.warn{color:#fed7aa}.footer{font-size:11px;color:var(--muted);line-height:1.5;padding:8px}
 @media(min-width:520px){.calendar{grid-template-columns:repeat(6,1fr)}}
 </style>
@@ -554,10 +556,35 @@ function render(){
 }
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function toggleHabit(id,v){if(current().submitted)return;current().checks[id]=v;save();render();}
-function submitDay(){const d=current();if(d.submitted)return;if(pct(state.currentDay)!==100){showNotice("Complete every habit before submitting this day.");return;}d.submitted=true;save();render();showNotice(state.currentDay===30?"Challenge complete — congratulations!":"Day submitted and saved on this device.");}
+function submitDay(){
+  const d = current();
+  if(d.submitted) return;
+  if(pct(state.currentDay)!==100){
+    showNotice("Complete every habit before submitting this day.");
+    return;
+  }
+  d.submitted = true;
+  save();
+  render();
+  showNotice(
+    state.currentDay === state.durationDays
+      ? "Challenge complete — congratulations!"
+      : "Day submitted and saved on this device."
+  );
+}
 function resetToday(){if(!confirm("Clear today's checkboxes? Submitted history for this day will also be unsubmitted."))return;const d=current();d.checks={};d.submitted=false;save();render();showNotice("Today's checklist was reset.");}
 function prevDay(){if(state.currentDay>1){state.currentDay--;save();render();}else showNotice("You're already on Day 1.");}
-function nextDay(){if(state.currentDay>=30){showNotice("You're on Day 30.");return;}if(!current().submitted&&!confirm("This day is not submitted. Move to the next day anyway?"))return;state.currentDay++;save();render();showNotice("");}
+function nextDay(){
+  if(state.currentDay >= state.durationDays){
+    showNotice("You're on the final day of this challenge.");
+    return;
+  }
+  if(!current().submitted && !confirm("This day is not submitted. Move to the next day anyway?")) return;
+  state.currentDay++;
+  save();
+  render();
+  showNotice("");
+}
 function goDay(d){state.currentDay=d;save();render();showView("today");}
 function setDayType(v){
   const types = allDayTypes();
