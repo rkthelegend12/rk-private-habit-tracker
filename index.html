@@ -58,7 +58,38 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
   <h2>Challenge schedule</h2>
 </div>
 
-<p class="sub">Choose when your 30-day challenge begins.</p>
+<p class="sub">Choose your challenge start date and duration.</p>
+
+<label class="muted" for="challengeStartDate">Start date</label>
+<div class="row" style="margin-top:6px">
+  <input id="challengeStartDate" type="date">
+</div>
+
+<label class="muted" for="challengeDuration" style="display:block;margin-top:12px">
+  Challenge duration
+</label>
+<div class="row" style="margin-top:6px">
+  <select id="challengeDuration" onchange="toggleCustomDuration()">
+    <option value="21">21 days</option>
+    <option value="30">30 days</option>
+    <option value="45">45 days</option>
+    <option value="custom">Custom duration</option>
+  </select>
+</div>
+
+<div id="customDurationRow" class="hidden" style="margin-top:10px">
+  <label class="muted" for="customChallengeDays">Custom duration (1–365 days)</label>
+  <input id="customChallengeDays" type="number"
+    min="1" max="365" step="1" placeholder="Enter number of days">
+</div>
+
+<button type="button" class="primary"
+  style="width:100%;margin-top:12px"
+  onclick="applyChallengeStartDate()">
+  Start / Update Challenge
+</button>
+
+<p class="sub" id="challengeEndDate"></p>
 
 <div class="row" style="margin-top:12px">
   <input id="challengeStartDate" type="date">
