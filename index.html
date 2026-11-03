@@ -149,6 +149,7 @@ function localDateKey(){
 }
 let state={
   startDate:localDateKey(),
+  durationDays:30,
   currentDay:1,
   habits:DEFAULTS.map((label,i)=>({id:i+1,label})),
   days:{},
@@ -156,13 +157,13 @@ let state={
   typeSettings:{},
   customDayTypes:[]
 };
+
 function load(){
   try {
     const raw = localStorage.getItem(KEY);
 
     if(raw){
       const s = JSON.parse(raw);
-
       if(s && Array.isArray(s.habits) && s.days){
         state = {...state, ...s};
       }
@@ -171,14 +172,19 @@ function load(){
     showNotice("Could not read saved browser data. Export/import backups may help.");
   }
 
+  if(!Number.isInteger(Number(state.durationDays)) ||
+     Number(state.durationDays)<1 || Number(state.durationDays)>365){
+    state.durationDays=30;
+  } else {
+    state.durationDays=Number(state.durationDays);
+  }
+
   state.typeSettings =
     state.typeSettings && typeof state.typeSettings === "object"
-      ? state.typeSettings
-      : {};
+      ? state.typeSettings : {};
 
   state.customDayTypes = Array.isArray(state.customDayTypes)
-    ? state.customDayTypes
-    : [];
+    ? state.customDayTypes : [];
 
   const builtInTypes = [
     "College day",
@@ -187,43 +193,49 @@ function load(){
     "Rest day"
   ];
 
-  // Migrate older settings without changing saved habit or day data.
   if(!state.typeSettingsVersion){
     builtInTypes.forEach(type => {
       state.typeSettings[type] = state.habits.map(h => h.id);
     });
-
     state.typeSettingsVersion = 1;
   }
 
-  // Give any newly added day type all habits by default.
   [...builtInTypes, ...state.customDayTypes].forEach(type => {
     if(!Array.isArray(state.typeSettings[type])){
       state.typeSettings[type] = state.habits.map(h => h.id);
     }
   });
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){showNotice("Saving failed. Export a backup to avoid losing progress.");}}
-function ensureDay(d){if(!state.days[d])state.days[d]={checks:{},submitted:false};return state.days[d];}
+
+function save(){
+  try {
+    localStorage.setItem(KEY,JSON.stringify(state));
+  } catch(e) {
+    showNotice("Saving failed. Export a backup to avoid losing progress.");
+  }
+}
+
+function ensureDay(d){
+  if(!state.days[d]) state.days[d]={checks:{},submitted:false};
+  if(!state.days[d].checks) state.days[d].checks={};
+  return state.days[d];
+}
+
 function current(){return ensureDay(state.currentDay);}
+
 function habitsForDay(d){
   const type = state.dayTypes[d] || "College day";
-  const settings = state.typeSettings || {};
-  const selected = settings[type];
+  const selected = state.typeSettings?.[type];
 
-  if(!Array.isArray(selected)){
-    return state.habits;
-  }
-
+  if(!Array.isArray(selected)) return state.habits;
   return state.habits.filter(h => selected.includes(h.id));
 }
 
-function enabledHabits(){
-  return habitsForDay(state.currentDay);
-}
+function enabledHabits(){return habitsForDay(state.currentDay);}
 
 function completedCount(d){
-  const day = ensureDay(d);
+  const day = state.days[d];
+  if(!day || !day.checks) return 0;
   return habitsForDay(d).filter(h => day.checks[h.id] === true).length;
 }
 
@@ -232,77 +244,173 @@ function pct(d){
   if(total === 0) return 100;
   return Math.round(completedCount(d) / total * 100);
 }
+
+function rawElapsedDays(){
+  const start=new Date(state.startDate+"T00:00:00");
+  const today=new Date();
+  today.setHours(0,0,0,0);
+  return Math.floor((today-start)/86400000);
+}
+
+function elapsedChallengeDays(){
+  return Math.max(0,Math.min(state.durationDays,rawElapsedDays()+1));
+}
+
+function challengeDay(){
+  return Math.max(1,Math.min(state.durationDays,rawElapsedDays()+1));
+}
+
+function dayStatus(day){
+  if(state.days[day]?.submitted) return "Submitted";
+  const elapsed=elapsedChallengeDays();
+
+  if(day>elapsed) return "Upcoming";
+
+  if(rawElapsedDays()>=0 &&
+     rawElapsedDays()<state.durationDays &&
+     day===elapsed){
+    return "In progress";
+  }
+
+  return "Not submitted";
+}
+
+function averageHabitsPerDay(){
+  const elapsed=elapsedChallengeDays();
+  if(elapsed===0) return "0.0";
+
+  let total=0;
+  for(let day=1;day<=elapsed;day++){
+    total+=completedCount(day);
+  }
+
+  return (total/elapsed).toFixed(1);
+}
+
+function daysLeft(){
+  return Math.max(0,state.durationDays-elapsedChallengeDays());
+}
+
 function streak(){
   let latest = 0;
-  for(let d = 1; d <= 30; d++){
-    if(state.days[d]?.submitted) latest = d;
+  for(let d=1;d<=state.durationDays;d++){
+    if(state.days[d]?.submitted) latest=d;
   }
-  let n = 0;
-  for(let d = latest; d >= 1; d--){
+
+  let n=0;
+  for(let d=latest;d>=1;d--){
     if(state.days[d]?.submitted) n++;
     else break;
   }
   return n;
 }
-function fmtDate(d){const dt=new Date(state.startDate+"T12:00:00");dt.setDate(dt.getDate()+d-1);return dt.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});}
-function challengeDay(){
-  const start=new Date(state.startDate+"T00:00:00");
-  const today=new Date();
-  today.setHours(0,0,0,0);
-  const elapsed=Math.floor((today-start)/86400000);
-  return Math.max(1,Math.min(30,elapsed+1));
-}
-function renderChallengeSchedule(){
-  const input = document.getElementById("challengeStartDate");
-  const endLabel = document.getElementById("challengeEndDate");
 
-  if(!input || !endLabel) return;
-
-  input.value = state.startDate;
-
-  const end = new Date(state.startDate + "T12:00:00");
-  end.setDate(end.getDate() + 29);
-
-  endLabel.textContent =
-    "Challenge ends: " +
-    end.toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-    });
+function fmtDate(d){
+  const dt=new Date(state.startDate+"T12:00:00");
+  dt.setDate(dt.getDate()+d-1);
+  return dt.toLocaleDateString(undefined,{
+    weekday:"short",month:"short",day:"numeric"
+  });
 }
 
-function applyChallengeStartDate(){
-  const input = document.getElementById("challengeStartDate");
-  const newDate = input.value;
+function toggleCustomDuration(){
+  const select=document.getElementById("challengeDuration");
+  const row=document.getElementById("customDurationRow");
+  if(!select || !row) return;
 
-  if(!newDate || !/^\d{4}-\d{2}-\d{2}$/.test(newDate)){
-    showNotice("Please select a valid start date.");
+  row.classList.toggle("hidden",select.value!=="custom");
+  updateChallengePreview();
+}
+
+function updateChallengePreview(){
+  const startInput=document.getElementById("challengeStartDate");
+  const select=document.getElementById("challengeDuration");
+  const customInput=document.getElementById("customChallengeDays");
+  const endLabel=document.getElementById("challengeEndDate");
+
+  if(!startInput || !select || !endLabel) return;
+
+  const duration=select.value==="custom"
+    ? Number(customInput?.value)
+    : Number(select.value);
+
+  if(!startInput.value || !Number.isInteger(duration) ||
+     duration<1 || duration>365){
+    endLabel.textContent="Enter a valid start date and duration to preview the end date.";
     return;
   }
 
-  if(newDate === state.startDate){
-    showNotice("This is already your challenge start date.");
+  const end=new Date(startInput.value+"T12:00:00");
+  end.setDate(end.getDate()+duration-1);
+
+  endLabel.textContent="Challenge ends: "+end.toLocaleDateString("en-IN",{
+    day:"numeric",month:"long",year:"numeric"
+  });
+}
+
+function renderChallengeSchedule(){
+  const input=document.getElementById("challengeStartDate");
+  const select=document.getElementById("challengeDuration");
+  const customInput=document.getElementById("customChallengeDays");
+
+  if(!input || !select || !customInput) return;
+
+  input.value=state.startDate;
+
+  if([21,30,45].includes(state.durationDays)){
+    select.value=String(state.durationDays);
+    customInput.value="";
+  } else {
+    select.value="custom";
+    customInput.value=state.durationDays;
+  }
+
+  toggleCustomDuration();
+}
+
+function applyChallengeStartDate(){
+  const input=document.getElementById("challengeStartDate");
+  const select=document.getElementById("challengeDuration");
+  const customInput=document.getElementById("customChallengeDays");
+
+  const newDate=input.value;
+  const newDuration=select.value==="custom"
+    ? Number(customInput.value)
+    : Number(select.value);
+
+  if(!newDate || !/^\d{4}-\d{2}-\d{2}$/.test(newDate) ||
+     isNaN(new Date(newDate+"T12:00:00").getTime())){
+    showNotice("Please select a valid challenge start date.");
+    return;
+  }
+
+  if(!Number.isInteger(newDuration) || newDuration<1 || newDuration>365){
+    showNotice("Challenge duration must be a whole number from 1 to 365.");
+    return;
+  }
+
+  if(newDate===state.startDate && newDuration===state.durationDays){
+    showNotice("Your challenge schedule is already set this way.");
     return;
   }
 
   if(!confirm(
-    "Changing the start date will shift the calendar dates for all 30 challenge days. Your existing habit checkmarks and submissions will remain attached to their original challenge-day numbers. Continue?"
+    "Update your challenge schedule? Existing checkmarks, submissions and day-type settings will remain saved against their original challenge-day numbers. Days outside the new duration will be kept in your data but won't count in this challenge's analytics."
   )){
     renderChallengeSchedule();
     return;
   }
 
-  state.startDate = newDate;
-  state.currentDay = challengeDay();
+  state.startDate=newDate;
+  state.durationDays=newDuration;
+  state.currentDay=challengeDay();
 
   ensureDay(state.currentDay);
   save();
   render();
 
-  showNotice("Challenge start date updated successfully.");
+  showNotice("Challenge schedule updated. Your existing progress has been preserved.");
 }
-
 function render(){
   const d = current();
   const activeHabits = enabledHabits();
