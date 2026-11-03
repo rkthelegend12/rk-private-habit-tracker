@@ -30,7 +30,33 @@ button,input,select{font:inherit}button{border:1px solid var(--line);background:
 <body><main>
 <section class="hero">
  <div class="top"><div><div class="kicker">PRIVATE • ON-DEVICE TRACKER</div><h1>Discipline, daily.</h1><div class="sub" id="dateLabel">30-day challenge</div></div><div class="flame">🔥 <span id="streak">0</span><small>DAY STREAK</small></div></div>
- <div class="stats"><div class="stat"><span>TODAY'S PROGRESS</span><strong id="pct">0%</strong><div class="bar"><div id="dailyBar"></div></div><span id="count">0 of 9 habits</span></div><div class="stat"><span>CHALLENGE PROGRESS</span><strong id="overall">0/30</strong><div class="bar green"><div id="monthBar"></div></div><span id="remaining">30 days remaining</span></div></div>
+ <div class="stats">
+  <div class="stat">
+    <span>TODAY'S PROGRESS</span>
+    <strong id="pct">0%</strong>
+    <div class="bar"><div id="dailyBar"></div></div>
+    <span id="count">0 of 9 habits</span>
+  </div>
+
+  <div class="stat">
+    <span>CHALLENGE PROGRESS</span>
+    <strong id="overall">0/30</strong>
+    <div class="bar green"><div id="monthBar"></div></div>
+    <span id="remaining">30 days remaining</span>
+  </div>
+
+  <div class="stat">
+    <span>DAYS LEFT</span>
+    <strong id="daysLeft">30</strong>
+    <span>Days remaining in challenge</span>
+  </div>
+
+  <div class="stat">
+    <span>AVERAGE HABITS / DAY</span>
+    <strong id="averageHabits">0.0</strong>
+    <span>Completed habits per elapsed day</span>
+  </div>
+</div>
 </section>
 <nav class="tabs"><button id="tabToday" class="primary" onclick="showView('today')">✓ Today</button><button id="tabMonth" onclick="showView('month')">▦ 30 Days</button><button id="tabEdit" onclick="showView('edit')">✎ Edit Habits</button></nav>
 <div id="notice" class="notice hidden" role="status"></div>
