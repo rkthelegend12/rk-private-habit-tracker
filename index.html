@@ -385,13 +385,15 @@ const DEFAULTS=[
 "Sleep for at least 7 hours"
 ];
 const KEY="rk_private_habit_tracker_v1";
-  // DISCIPLINE DAILY — THEME ENGINE
+ // DISCIPLINE DAILY — THEME ENGINE
 const THEME_KEY = "discipline_daily_theme_preference_v1";
 
 function getThemePreference(){
   try {
     const saved = localStorage.getItem(THEME_KEY);
-    return saved === "obsidian" ? "obsidian" : "automatic";
+    return ["automatic","sunrise","ocean","obsidian"].includes(saved)
+      ? saved
+      : "automatic";
   } catch(e) {
     return "automatic";
   }
@@ -400,7 +402,9 @@ function getThemePreference(){
 let themePreference = getThemePreference();
 
 function getActiveTheme(){
-  if(themePreference === "obsidian") return "obsidian";
+  if(themePreference !== "automatic"){
+    return themePreference;
+  }
 
   const hour = new Date().getHours();
   return hour >= 6 && hour < 19 ? "sunrise" : "ocean";
@@ -422,7 +426,9 @@ function applyTheme(){
 }
 
 function setThemePreference(preference){
-  if(!["automatic","obsidian"].includes(preference)) return;
+  if(!["automatic","sunrise","ocean","obsidian"].includes(preference)){
+    return;
+  }
 
   themePreference = preference;
 
@@ -436,12 +442,10 @@ function setThemePreference(preference){
 function initTheme(){
   applyTheme();
 
-  // Recheck when the app returns to the foreground.
   document.addEventListener("visibilitychange",()=>{
     if(!document.hidden) applyTheme();
   });
 
-  // Check for automatic day/night transition every minute.
   setInterval(applyTheme,60000);
 }
 function localDateKey(){
