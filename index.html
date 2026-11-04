@@ -471,6 +471,103 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .brand-lockup p{font-size:8px}
   .hero-art{height:150px}
 } 
+ /* STAGE 2 — MOBILE NAVIGATION AND HABIT ROWS */
+
+main {
+  padding-bottom: 112px;
+}
+
+.tabs {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(620px, calc(100% - 24px));
+  margin: 0;
+  padding: 10px 9px calc(10px + env(safe-area-inset-bottom));
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -5px 25px #0002;
+  backdrop-filter: blur(16px);
+  z-index: 20;
+  gap: 5px;
+}
+
+.tabs button {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 3px;
+  border: 0;
+  border-radius: 15px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.tabs button.primary {
+  background: var(--panel2);
+  color: var(--orange);
+  border: 1px solid var(--line);
+}
+
+.habit {
+  align-items: center;
+  gap: 12px;
+  margin: 9px 0;
+  padding: 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--panel2);
+}
+
+.habit:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.habit input {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--green);
+}
+
+.habit label {
+  flex: 1;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.habit .num {
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+.habit-arrow {
+  color: var(--muted);
+  font-size: 23px;
+  line-height: 1;
+  padding-left: 4px;
+}
+
+@media(min-width:520px) {
+  .tabs {
+    bottom: 12px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+  }
+
+  main {
+    padding-bottom: 120px;
+  }
+} 
 @media(min-width:520px){
   .calendar{grid-template-columns:repeat(6,1fr)}
 }
@@ -557,10 +654,18 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div>
 </section>
 <nav class="tabs">
-  <button id="tabToday" class="primary" onclick="showView('today')">✓ Today</button>
-  <button id="tabMonth" onclick="showView('month')">▦ Calendar</button>
-  <button id="tabEdit" onclick="showView('edit')">✎ Edit</button>
-  <button id="tabAppearance" onclick="showView('appearance')">◐ Appearance</button>
+  <button id="tabToday" class="primary" onclick="showView('today')">
+    <span>⌂</span>Today
+  </button>
+  <button id="tabMonth" onclick="showView('month')">
+    <span>▦</span>Calendar
+  </button>
+  <button id="tabEdit" onclick="showView('edit')">
+    <span>✎</span>Edit
+  </button>
+  <button id="tabMore" onclick="showView('more')">
+    <span>•••</span>More
+  </button>
 </nav>
 <div id="notice" class="notice hidden" role="status"></div>
 <section id="todayView" class="card">
@@ -667,13 +772,17 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
   <button style="width:100%;margin-top:12px" onclick="showView('today')">Done editing</button>
   </section>
-<section id="appearanceView" class="card hidden">
+<section id="moreView" class="card hidden">
   <div class="sectionhead">
-    <h2>Appearance & Themes</h2>
-    <span class="muted">Personalise your space</span>
+    <h2>More</h2>
+    <span class="muted">Settings & tools</span>
   </div>
 
-  <p class="sub">Choose how Discipline Daily looks. Automatic follows your local device time. Manual themes stay active until you change them.</p>
+  <div class="sectionhead" style="margin-top:22px">
+    <h2>Appearance & Themes</h2>
+  </div>
+
+  <p class="sub">Automatic follows your local device time. Manual themes stay active until changed.</p>
 
   <div class="theme-option">
     <div>
@@ -708,6 +817,20 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div>
 
   <p class="notice" id="themeStatus" role="status"></p>
+
+  <div class="sectionhead" style="margin-top:28px">
+    <h2>Privacy & Backups</h2>
+  </div>
+
+  <p class="sub">Your habit data is saved in this browser on this device using local storage. The app has no analytics, advertising, account or cloud connection.</p>
+
+  <div class="row">
+    <button style="flex:1" onclick="exportData()">Export backup</button>
+    <button style="flex:1" onclick="document.getElementById('importFile').click()">Import backup</button>
+    <input class="hidden" type="file" id="importFile" accept="application/json,.json" onchange="importData(event)">
+  </div>
+
+  <p class="sub warn">Important: Do not clear browser website data unless you have exported a backup. Local storage is not encrypted.</p>
 </section>
   
 <section class="card"><h2 style="font-size:17px;margin-top:0">Privacy & backups</h2><p class="sub">This standalone file has no analytics, advertising, account, or cloud connection. Your habit data is saved in this browser on this device using local storage.</p><div class="row"><button style="flex:1" onclick="exportData()">Export backup</button><button style="flex:1" onclick="document.getElementById('importFile').click()">Import backup</button><input class="hidden" type="file" id="importFile" accept="application/json,.json" onchange="importData(event)"></div><p class="sub warn">Important: if you open this file from different locations or browsers, they may not share the same storage. Do not clear browser website data unless you have exported a backup. Local storage is not encrypted.</p></section>
@@ -1105,18 +1228,19 @@ document.getElementById("streak-copy").textContent = streak();
     p === 100 ? "Submit completed day" :
     "Complete all habits to submit";
 
-  document.getElementById("habitList").innerHTML = activeHabits.map((h,i) =>
-    `<div class="habit ${d.checks[h.id] ? 'done' : ''}">
-      <input type="checkbox" id="h${h.id}"
-        ${d.checks[h.id] ? 'checked' : ''}
-        ${(submitted || isUpcoming) ? 'disabled' : ''}
-        onchange="toggleHabit(${h.id},this.checked)">
-      <label for="h${h.id}">
-        <span class="num">HABIT ${String(i+1).padStart(2,'0')}</span>
-        ${esc(h.label)}
-      </label>
-    </div>`
-  ).join("");
+ document.getElementById("habitList").innerHTML = activeHabits.map((h,i) =>
+  `<div class="habit ${d.checks[h.id] ? 'done' : ''}">
+    <input type="checkbox" id="h${h.id}"
+      ${d.checks[h.id] ? 'checked' : ''}
+      ${(submitted || isUpcoming) ? 'disabled' : ''}
+      onchange="toggleHabit(${h.id},this.checked)">
+    <label for="h${h.id}">
+      <span class="num">HABIT ${String(i+1).padStart(2,'0')}</span>
+      ${esc(h.label)}
+    </label>
+    <span class="habit-arrow" aria-hidden="true">›</span>
+  </div>`
+).join("");
 
   let done = 0;
   for(let day=1;day<=duration;day++){
@@ -1350,13 +1474,13 @@ function deleteDayType(){
   showNotice("Day type deleted.");
 }
 function showView(v){
-  const views=["today","month","edit","appearance"];
+  const views=["today","month","edit","more"];
 
   views.forEach(k=>{
     document.getElementById(k+"View").classList.toggle("hidden",k!==v);
   });
 
-  const tabs=["Today","Month","Edit","Appearance"];
+  const tabs=["Today","Month","Edit","More"];
 
   tabs.forEach(k=>{
     document.getElementById("tab"+k).classList.toggle(
@@ -1366,7 +1490,7 @@ function showView(v){
   });
 
   if(v==="edit") render();
-  if(v==="appearance") renderAppearance();
+  if(v==="more") renderAppearance();
 }
 function renameHabit(id){const h=state.habits.find(x=>x.id===id);if(!h)return;const v=prompt("Edit habit name:",h.label);if(v&&v.trim()){h.label=v.trim();save();render();}}
 function deleteHabit(id){if(!confirm("Delete this habit from the checklist? This changes scoring for the challenge."))return;state.habits=state.habits.filter(x=>x.id!==id);save();render();}
