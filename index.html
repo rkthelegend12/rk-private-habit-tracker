@@ -238,41 +238,323 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .theme-option strong{font-size:15px}
 .theme-option p{margin:5px 0 0}
 .theme-option button{min-width:76px}
+ /* DISCIPLINE DAILY — VISION BOARD HERO */
+
+.dashboard-hero{
+  padding:0;
+  overflow:hidden;
+  background:var(--panel);
+  border-radius:24px;
+}
+
+.brand-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:18px 18px 12px;
+}
+
+.brand-lockup{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+
+.brand-mark{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:var(--text);
+  background:var(--panel2);
+  flex-shrink:0;
+}
+
+.brand-mark svg{width:38px;height:38px}
+
+.brand-lockup h1{
+  margin:0;
+  font-size:23px;
+  letter-spacing:-.7px;
+  font-weight:800;
+  color:var(--text);
+}
+
+.brand-lockup h1 span{color:var(--orange)}
+
+.brand-lockup p{
+  margin:4px 0 0;
+  font-size:9px;
+  letter-spacing:.08em;
+  color:var(--muted);
+  font-weight:700;
+}
+
+.streak-pill{
+  flex-shrink:0;
+  background:var(--panel2);
+  color:var(--orange);
+  padding:9px 12px;
+  border-radius:30px;
+  font-size:14px;
+}
+
+.hero-art{
+  height:175px;
+  overflow:hidden;
+  background:linear-gradient(180deg,var(--panel2),var(--bg));
+}
+
+.hero-art svg{width:100%;height:100%;display:block}
+
+.landscape-sun{
+  fill:#FFD27A;
+  filter:drop-shadow(0 0 18px #FFD27A88);
+}
+
+.landscape-moon{
+  fill:#C6E8F5;
+  opacity:0;
+}
+
+.mountain-far{fill:#A9A1A0;opacity:.55}
+.mountain-mid{fill:#687B83;opacity:.85}
+.mountain-front{fill:#293F4D}
+.mountain-snow{fill:#F5E9D4;opacity:.8}
+.mountain-ridge{
+  fill:none;
+  stroke:#E5B36C;
+  stroke-width:3;
+  opacity:.6;
+}
+.landscape-trees{
+  fill:none;
+  stroke:var(--text);
+  stroke-width:5;
+  stroke-linejoin:round;
+  opacity:.55;
+}
+
+/* Ocean Depth landscape */
+:root[data-theme="ocean"] .hero-art{
+  background:linear-gradient(180deg,#0A2942,#126080);
+}
+:root[data-theme="ocean"] .landscape-sun{opacity:0}
+:root[data-theme="ocean"] .landscape-moon{opacity:1}
+:root[data-theme="ocean"] .mountain-far{fill:#315D77}
+:root[data-theme="ocean"] .mountain-mid{fill:#183D56}
+:root[data-theme="ocean"] .mountain-front{fill:#0B263B}
+:root[data-theme="ocean"] .mountain-snow{fill:#A7D5E4}
+:root[data-theme="ocean"] .mountain-ridge{stroke:#69CDE2}
+
+/* Obsidian Pro landscape */
+:root[data-theme="obsidian"] .hero-art{
+  background:linear-gradient(180deg,#171717,#383025);
+}
+:root[data-theme="obsidian"] .landscape-sun{fill:#D5A65D}
+:root[data-theme="obsidian"] .mountain-far{fill:#51483D}
+:root[data-theme="obsidian"] .mountain-mid{fill:#302B25}
+:root[data-theme="obsidian"] .mountain-front{fill:#171615}
+:root[data-theme="obsidian"] .mountain-snow{fill:#D9B574}
+:root[data-theme="obsidian"] .mountain-ridge{stroke:#D5A65D}
+
+.hero-date-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  padding:13px 18px 9px;
+  font-size:13px;
+  color:var(--text);
+}
+
+.challenge-tag{
+  background:var(--panel2);
+  color:var(--orange);
+  border:1px solid var(--line);
+  padding:6px 10px;
+  border-radius:30px;
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.today-progress-card{
+  margin:5px 16px 10px;
+  padding:15px;
+  border-radius:17px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+}
+
+.progress-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12px;
+  font-weight:700;
+}
+
+.progress-heading strong{
+  font-size:25px;
+  color:var(--orange);
+}
+
+.today-progress-card .bar{margin:10px 0 7px}
+.today-progress-card>span{font-size:11px;color:var(--muted)}
+
+.dashboard-stats{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+  padding:0 16px 12px;
+}
+
+.dashboard-stat{
+  min-width:0;
+  padding:12px 5px;
+  text-align:center;
+  border-radius:15px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+}
+
+.dashboard-stat .stat-icon{
+  display:block;
+  font-size:19px;
+  color:var(--orange);
+  margin-bottom:4px;
+}
+
+.dashboard-stat strong{
+  display:block;
+  font-size:19px;
+  color:var(--text);
+}
+
+.dashboard-stat small{
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.challenge-progress-strip{
+  margin:0 16px 16px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:var(--bg);
+}
+
+.challenge-progress-strip>div:first-child{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:10px;
+  color:var(--muted);
+}
+
+.challenge-progress-strip strong{
+  font-size:14px;
+  color:var(--text);
+}
+
+.challenge-progress-strip .bar{margin:8px 0 5px}
+.challenge-progress-strip small{font-size:10px;color:var(--muted)}
+
+@media(max-width:380px){
+  .brand-lockup h1{font-size:20px}
+  .brand-lockup p{font-size:8px}
+  .hero-art{height:150px}
+} 
 @media(min-width:520px){
   .calendar{grid-template-columns:repeat(6,1fr)}
 }
 </style>
 </head>
 <body><main>
-<section class="hero">
- <div class="top"><div><div class="kicker">PRIVATE • ON-DEVICE TRACKER</div><h1>Discipline, daily.</h1><div class="sub" id="dateLabel">30-day challenge</div></div><div class="flame">🔥 <span id="streak">0</span><small>DAY STREAK</small></div></div>
- <div class="stats">
-  <div class="stat">
-    <span>TODAY'S PROGRESS</span>
-    <strong id="pct">0%</strong>
+<section class="hero dashboard-hero">
+  <div class="brand-header">
+    <div class="brand-lockup">
+      <div class="brand-mark">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M5 49 25 20 36 34 43 25 60 49Z" fill="currentColor" opacity=".9"/>
+          <path d="m18 30 7-10 7 9-7-4Z" fill="var(--orange)"/>
+          <path d="M34 48 45 31 60 49Z" fill="var(--blue)" opacity=".9"/>
+          <circle cx="43" cy="12" r="5" fill="var(--orange)"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Discipline <span>Daily</span></h1>
+        <p>BUILD HABITS. STAY CONSISTENT. WIN DAILY.</p>
+      </div>
+    </div>
+    <div class="streak-pill">🔥 <strong id="streak">0</strong></div>
+  </div>
+
+  <div class="hero-art" aria-label="Mountain landscape illustration">
+    <svg viewBox="0 0 900 350" role="img" aria-label="Layered mountain landscape">
+      <circle class="landscape-sun" cx="690" cy="115" r="48"/>
+      <circle class="landscape-moon" cx="690" cy="115" r="34"/>
+      <path class="mountain-far" d="M0 255 110 170 190 220 310 105 420 215 525 145 640 230 760 150 900 245V350H0Z"/>
+      <path class="mountain-mid" d="M0 285 145 205 245 260 390 145 510 260 650 175 790 260 900 195V350H0Z"/>
+      <path class="mountain-front" d="M0 315 150 245 260 295 420 205 555 300 710 210 900 305V350H0Z"/>
+      <path class="mountain-snow" d="m310 105 35 43-34-15-30 18Z"/>
+      <path class="mountain-snow" d="m650 175 30 37-31-12-28 17Z"/>
+      <path class="mountain-ridge" d="M0 318 150 248 260 298 420 208 555 303 710 213 900 308"/>
+      <g class="landscape-trees">
+        <path d="M70 310v-54m-17 28 17-35 17 35m-28-12 28 0"/>
+        <path d="M115 322v-66m-19 34 19-40 19 40m-30-13 30 0"/>
+        <path d="M820 320v-58m-17 29 17-36 17 36m-27-12 27 0"/>
+        <path d="M865 325v-65m-19 33 19-40 19 40m-30-13 30 0"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="hero-date-row">
+    <span id="dateLabel">30-day challenge</span>
+    <span class="challenge-tag">YOUR CHALLENGE</span>
+  </div>
+
+  <div class="today-progress-card">
+    <div class="progress-heading">
+      <span>TODAY'S PROGRESS</span>
+      <strong id="pct">0%</strong>
+    </div>
     <div class="bar"><div id="dailyBar"></div></div>
     <span id="count">0 of 9 habits</span>
   </div>
 
-  <div class="stat">
-    <span>CHALLENGE PROGRESS</span>
-    <strong id="overall">0/30</strong>
+  <div class="dashboard-stats">
+    <div class="dashboard-stat">
+      <span class="stat-icon">🔥</span>
+      <strong id="streak-copy">0</strong>
+      <small>Day Streak</small>
+    </div>
+    <div class="dashboard-stat">
+      <span class="stat-icon">▦</span>
+      <strong id="daysLeft">30</strong>
+      <small>Days Left</small>
+    </div>
+    <div class="dashboard-stat">
+      <span class="stat-icon">▥</span>
+      <strong id="averageHabits">0.0</strong>
+      <small>Avg / Day</small>
+    </div>
+  </div>
+
+  <div class="challenge-progress-strip">
+    <div>
+      <span>CHALLENGE PROGRESS</span>
+      <strong id="overall">0/30</strong>
+    </div>
     <div class="bar green"><div id="monthBar"></div></div>
-    <span id="remaining">30 days remaining</span>
+    <small id="remaining">30 days remaining</small>
   </div>
-
-  <div class="stat">
-    <span>DAYS LEFT</span>
-    <strong id="daysLeft">30</strong>
-    <span>Days remaining in challenge</span>
-  </div>
-
-  <div class="stat">
-    <span>AVERAGE HABITS / DAY</span>
-    <strong id="averageHabits">0.0</strong>
-    <span>Completed habits per elapsed day</span>
-  </div>
-</div>
 </section>
 <nav class="tabs">
   <button id="tabToday" class="primary" onclick="showView('today')">✓ Today</button>
@@ -801,7 +1083,8 @@ function render(){
   document.getElementById("dateLabel").textContent =
     `Day ${state.currentDay} of ${duration} · ${fmtDate(state.currentDay)}`;
 
-  document.getElementById("streak").textContent = streak();
+document.getElementById("streak").textContent = streak();
+document.getElementById("streak-copy").textContent = streak();
   document.getElementById("pct").textContent = p + "%";
   document.getElementById("dailyBar").style.width = p + "%";
   document.getElementById("count").textContent =
