@@ -226,7 +226,18 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 .warn{color:var(--orange)}
 .footer{font-size:11px;color:var(--muted);line-height:1.5;padding:8px}
-
+.theme-option{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+}
+.theme-option:last-of-type{border-bottom:0}
+.theme-option strong{font-size:15px}
+.theme-option p{margin:5px 0 0}
+.theme-option button{min-width:76px}
 @media(min-width:520px){
   .calendar{grid-template-columns:repeat(6,1fr)}
 }
@@ -263,7 +274,12 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div>
 </div>
 </section>
-<nav class="tabs"><button id="tabToday" class="primary" onclick="showView('today')">✓ Today</button><button id="tabMonth" onclick="showView('month')">▦ 30 Days</button><button id="tabEdit" onclick="showView('edit')">✎ Edit Habits</button></nav>
+<nav class="tabs">
+  <button id="tabToday" class="primary" onclick="showView('today')">✓ Today</button>
+  <button id="tabMonth" onclick="showView('month')">▦ Calendar</button>
+  <button id="tabEdit" onclick="showView('edit')">✎ Edit</button>
+  <button id="tabAppearance" onclick="showView('appearance')">◐ Appearance</button>
+</nav>
 <div id="notice" class="notice hidden" role="status"></div>
 <section id="todayView" class="card">
  <div class="sectionhead"><h2>Today's habits</h2><span id="status" class="muted">In progress</span></div><p class="sub">Tap each checkbox as you complete a habit.</p>
@@ -368,7 +384,24 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div>
 
   <button style="width:100%;margin-top:12px" onclick="showView('today')">Done editing</button>
+<div>
+      <strong>Ocean Depth</strong>
+      <p class="sub">Deep navy, ocean blue and muted teal</p>
+    </div>
+    <button onclick="setThemePreference('ocean')">Select</button>
+  </div>
+
+  <div class="theme-option">
+    <div>
+      <strong>Obsidian Pro</strong>
+      <p class="sub">Matte black, graphite and champagne gold</p>
+    </div>
+    <button onclick="setThemePreference('obsidian')">Select</button>
+  </div>
+
+  <p class="notice" id="themeStatus" role="status"></p>
 </section>
+  
 <section class="card"><h2 style="font-size:17px;margin-top:0">Privacy & backups</h2><p class="sub">This standalone file has no analytics, advertising, account, or cloud connection. Your habit data is saved in this browser on this device using local storage.</p><div class="row"><button style="flex:1" onclick="exportData()">Export backup</button><button style="flex:1" onclick="document.getElementById('importFile').click()">Import backup</button><input class="hidden" type="file" id="importFile" accept="application/json,.json" onchange="importData(event)"></div><p class="sub warn">Important: if you open this file from different locations or browsers, they may not share the same storage. Do not clear browser website data unless you have exported a backup. Local storage is not encrypted.</p></section>
 <div class="footer">Private by design: the app itself makes no network requests. Browser/OS backup behavior is controlled by your device settings. This file cannot prevent someone with access to your unlocked phone from seeing the tracker.</div>
 </main>
@@ -437,8 +470,22 @@ function setThemePreference(preference){
   } catch(e) {}
 
   applyTheme();
+  renderAppearance();
 }
+function renderAppearance(){
+  const status=document.getElementById("themeStatus");
+  if(!status) return;
 
+  const labels={
+    automatic:"Automatic mode",
+    sunrise:"Sunrise Peak — Manual",
+    ocean:"Ocean Depth — Manual",
+    obsidian:"Obsidian Pro — Manual"
+  };
+
+  status.textContent="Selected: "+labels[themePreference];
+}
+  
 function initTheme(){
   applyTheme();
 
@@ -993,8 +1040,25 @@ function deleteDayType(){
   render();
   showNotice("Day type deleted.");
 }
-function showView(v){["today","month","edit"].forEach(k=>document.getElementById(k+"View").classList.toggle("hidden",k!==v));["Today","Month","Edit"].forEach(k=>document.getElementById("tab"+k).classList.toggle("primary",k.toLowerCase()===v));if(v==="edit")render();}
-function showNotice(s){const e=document.getElementById("notice");e.textContent=s;e.classList.toggle("hidden",!s);}
+function showView(v){
+  const views=["today","month","edit","appearance"];
+
+  views.forEach(k=>{
+    document.getElementById(k+"View").classList.toggle("hidden",k!==v);
+  });
+
+  const tabs=["Today","Month","Edit","Appearance"];
+
+  tabs.forEach(k=>{
+    document.getElementById("tab"+k).classList.toggle(
+      "primary",
+      k.toLowerCase()===v
+    );
+  });
+
+  if(v==="edit") render();
+  if(v==="appearance") renderAppearance();
+}
 function renameHabit(id){const h=state.habits.find(x=>x.id===id);if(!h)return;const v=prompt("Edit habit name:",h.label);if(v&&v.trim()){h.label=v.trim();save();render();}}
 function deleteHabit(id){if(!confirm("Delete this habit from the checklist? This changes scoring for the challenge."))return;state.habits=state.habits.filter(x=>x.id!==id);save();render();}
 document.getElementById("addForm").addEventListener("submit",e=>{e.preventDefault();const input=document.getElementById("newHabit"),label=input.value.trim();if(!label)return;state.habits.push({id:Math.max(0,...state.habits.map(h=>h.id))+1,label});input.value="";save();render();showNotice("Habit added.");});
