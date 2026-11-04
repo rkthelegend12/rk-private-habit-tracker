@@ -384,7 +384,32 @@ button:disabled{opacity:.45;cursor:not-allowed}
   </div>
 
   <button style="width:100%;margin-top:12px" onclick="showView('today')">Done editing</button>
-<div>
+<section id="appearanceView" class="card hidden">
+  <div class="sectionhead">
+    <h2>Appearance & Themes</h2>
+    <span class="muted">Personalise your space</span>
+  </div>
+
+  <p class="sub">Choose how Discipline Daily looks. Automatic follows your local device time. Manual themes stay active until you change them.</p>
+
+  <div class="theme-option">
+    <div>
+      <strong>Automatic</strong>
+      <p class="sub">Sunrise Peak during the day · Ocean Depth at night</p>
+    </div>
+    <button onclick="setThemePreference('automatic')">Select</button>
+  </div>
+
+  <div class="theme-option">
+    <div>
+      <strong>Sunrise Peak</strong>
+      <p class="sub">Warm cream, peach and golden accents</p>
+    </div>
+    <button onclick="setThemePreference('sunrise')">Select</button>
+  </div>
+
+  <div class="theme-option">
+    <div>
       <strong>Ocean Depth</strong>
       <p class="sub">Deep navy, ocean blue and muted teal</p>
     </div>
