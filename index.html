@@ -385,6 +385,65 @@ const DEFAULTS=[
 "Sleep for at least 7 hours"
 ];
 const KEY="rk_private_habit_tracker_v1";
+  // DISCIPLINE DAILY — THEME ENGINE
+const THEME_KEY = "discipline_daily_theme_preference_v1";
+
+function getThemePreference(){
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    return saved === "obsidian" ? "obsidian" : "automatic";
+  } catch(e) {
+    return "automatic";
+  }
+}
+
+let themePreference = getThemePreference();
+
+function getActiveTheme(){
+  if(themePreference === "obsidian") return "obsidian";
+
+  const hour = new Date().getHours();
+  return hour >= 6 && hour < 19 ? "sunrise" : "ocean";
+}
+
+function applyTheme(){
+  const theme = getActiveTheme();
+  document.documentElement.dataset.theme = theme;
+
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta){
+    const colors = {
+      sunrise:"#F5EEE5",
+      ocean:"#0C1928",
+      obsidian:"#090909"
+    };
+    meta.setAttribute("content",colors[theme]);
+  }
+}
+
+function setThemePreference(preference){
+  if(!["automatic","obsidian"].includes(preference)) return;
+
+  themePreference = preference;
+
+  try {
+    localStorage.setItem(THEME_KEY,preference);
+  } catch(e) {}
+
+  applyTheme();
+}
+
+function initTheme(){
+  applyTheme();
+
+  // Recheck when the app returns to the foreground.
+  document.addEventListener("visibilitychange",()=>{
+    if(!document.hidden) applyTheme();
+  });
+
+  // Check for automatic day/night transition every minute.
+  setInterval(applyTheme,60000);
+}
 function localDateKey(){
   const now=new Date();
   const y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,"0"),d=String(now.getDate()).padStart(2,"0");
@@ -937,6 +996,7 @@ function deleteHabit(id){if(!confirm("Delete this habit from the checklist? This
 document.getElementById("addForm").addEventListener("submit",e=>{e.preventDefault();const input=document.getElementById("newHabit"),label=input.value.trim();if(!label)return;state.habits.push({id:Math.max(0,...state.habits.map(h=>h.id))+1,label});input.value="";save();render();showNotice("Habit added.");});
 function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="rk-habit-tracker-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function importData(ev){const file=ev.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);if(!Array.isArray(s.habits)||!s.days)throw Error("Invalid");if(confirm("Replace the current tracker with this backup?")){state=s;save();render();showNotice("Backup imported.");}}catch(e){showNotice("That backup file could not be read.");}ev.target.value="";};r.readAsText(file);}
+initTheme();
 load();
 state.currentDay=challengeDay();
 ensureDay(state.currentDay);
