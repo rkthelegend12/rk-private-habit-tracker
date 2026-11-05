@@ -867,9 +867,32 @@ button.more-item {
   color: var(--muted);
   font-size: 9px;
 }
+/* STAGE 3 — SECTION-SPECIFIC BRANDING */
+
+body.view-month .today-progress-card {
+  display: none;
+}
+
+body.view-compact .dashboard-hero {
+  padding: 0;
+  margin-bottom: 14px;
+}
+
+body.view-compact .brand-header {
+  padding: 17px 18px;
+}
+
+body.view-compact .streak-pill,
+body.view-compact .hero-art,
+body.view-compact .hero-date-row,
+body.view-compact .today-progress-card,
+body.view-compact .dashboard-stats,
+body.view-compact .challenge-progress-strip {
+  display: none;
+}
 </style>
 </head>
-<body><main>
+<body class="view-today"><main>
 <section class="hero dashboard-hero">
   <div class="brand-header">
     <div class="brand-lockup">
@@ -2141,6 +2164,18 @@ function showView(v){
       element.classList.toggle("hidden",k!==v);
     }
   });
+
+  document.body.classList.remove(
+    "view-today","view-month","view-compact"
+  );
+
+  if(v==="today"){
+    document.body.classList.add("view-today");
+  } else if(v==="month"){
+    document.body.classList.add("view-month");
+  } else {
+    document.body.classList.add("view-compact");
+  }
 
   const activeTab = [
     "analytics","appearance","backup"
