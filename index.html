@@ -1269,22 +1269,18 @@ const DEFAULTS=[
 "Sleep for at least 7 hours"
 ];
 const KEY="rk_private_habit_tracker_v1";
- // DISCIPLINE DAILY — THEME ENGINE
+// DISCIPLINE DAILY — THEME ENGINE
 const THEME_KEY = "discipline_daily_theme_preference_v1";
 
-function setThemePreference(preference){
-  if(!["automatic","obsidian"].includes(preference)){
-    return;
-  }
-
-  themePreference = preference;
-
+function getThemePreference(){
   try {
-    localStorage.setItem(THEME_KEY,preference);
-  } catch(e) {}
-
-  applyTheme();
-  renderAppearance();
+    const saved = localStorage.getItem(THEME_KEY);
+    return ["automatic","obsidian"].includes(saved)
+      ? saved
+      : "automatic";
+  } catch(e) {
+    return "automatic";
+  }
 }
 
 let themePreference = getThemePreference();
@@ -1314,7 +1310,7 @@ function applyTheme(){
 }
 
 function setThemePreference(preference){
-  if(!["automatic","sunrise","ocean","obsidian"].includes(preference)){
+  if(!["automatic","obsidian"].includes(preference)){
     return;
   }
 
@@ -1327,6 +1323,7 @@ function setThemePreference(preference){
   applyTheme();
   renderAppearance();
 }
+
 function renderAppearance(){
   const status=document.getElementById("themeStatus");
   if(!status) return;
