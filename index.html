@@ -471,20 +471,29 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .brand-lockup p{font-size:8px}
   .hero-art{height:150px}
 } 
- /* STAGE 2 — MOBILE NAVIGATION AND HABIT ROWS */
+/* STAGE 2 — FIXED NAVIGATION AND HABIT ROWS */
 
 main {
-  padding-bottom: 112px;
+  padding-bottom: 125px;
 }
 
 .tabs {
   position: fixed;
-  bottom: 0;
   left: 50%;
+  bottom: 0;
   transform: translateX(-50%);
-  width: min(620px, calc(100% - 24px));
+  width: calc(100% - 24px);
+  max-width: 620px;
+  height: calc(82px + env(safe-area-inset-bottom));
+  min-height: 82px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 5px;
   margin: 0;
-  padding: 10px 9px calc(10px + env(safe-area-inset-bottom));
+  padding: 8px 9px calc(8px + env(safe-area-inset-bottom));
   background: var(--panel);
   border: 1px solid var(--line);
   border-bottom: 0;
@@ -492,24 +501,32 @@ main {
   box-shadow: 0 -5px 25px #0002;
   backdrop-filter: blur(16px);
   z-index: 20;
-  gap: 5px;
 }
 
 .tabs button {
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 0;
+  width: 25%;
+  height: 58px;
+  min-height: 58px;
+  align-self: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 10px 3px;
+  padding: 5px 2px;
   border: 0;
   border-radius: 15px;
   background: transparent;
   color: var(--muted);
   font-size: 11px;
   font-weight: 700;
+}
+
+.tabs button span {
+  display: block;
+  font-size: 19px;
+  line-height: 1;
 }
 
 .tabs button.primary {
@@ -560,6 +577,9 @@ main {
 @media(min-width:520px) {
   .tabs {
     bottom: 12px;
+    height: 78px;
+    min-height: 78px;
+    padding: 8px;
     border: 1px solid var(--line);
     border-radius: 22px;
   }
@@ -567,7 +587,7 @@ main {
   main {
     padding-bottom: 120px;
   }
-} 
+}
 @media(min-width:520px){
   .calendar{grid-template-columns:repeat(6,1fr)}
 }
