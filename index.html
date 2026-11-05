@@ -592,6 +592,281 @@ main {
 @media(min-width:520px){
   .calendar{grid-template-columns:repeat(6,1fr)}
 }
+/* STAGE 3 — MORE TAB AND ANALYTICS */
+
+.more-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.more-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel2);
+  color: var(--text);
+  text-align: left;
+}
+
+button.more-item {
+  cursor: pointer;
+}
+
+.more-item-icon {
+  width: 43px;
+  height: 43px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--bg);
+  color: var(--orange);
+  font-size: 23px;
+}
+
+.more-item-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.more-item-copy strong {
+  font-size: 14px;
+}
+
+.more-item-copy small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.more-arrow {
+  color: var(--muted);
+  font-size: 24px;
+}
+
+.more-item.planned {
+  opacity: .65;
+  cursor: default;
+}
+
+.more-status {
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 5px 8px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.subpage-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.subpage-head h2 {
+  font-size: 19px;
+  margin: 0;
+}
+
+.subpage-head p {
+  margin: 5px 0 0;
+}
+
+.back-button {
+  flex-shrink: 0;
+  padding: 9px 12px;
+  font-size: 12px;
+}
+
+.range-toggle {
+  display: flex;
+  gap: 6px;
+  margin: 16px 0;
+  padding: 5px;
+  border-radius: 13px;
+  background: var(--panel2);
+}
+
+.range-toggle button {
+  flex: 1;
+  padding: 9px 3px;
+  border: 0;
+  background: transparent;
+  font-size: 11px;
+}
+
+.range-toggle button.primary {
+  background: var(--button-primary);
+}
+
+.analytics-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.analytics-stat {
+  min-width: 0;
+  padding: 12px 5px;
+  text-align: center;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.analytics-stat small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.analytics-stat strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 20px;
+}
+
+.analytics-panel {
+  margin-top: 13px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+}
+
+.analytics-panel h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.analytics-chart-scroll {
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+.analytics-chart {
+  height: 165px;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  padding: 8px 2px 0;
+}
+
+.analytics-column {
+  flex: 1;
+  min-width: 25px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+}
+
+.analytics-bar-track {
+  height: 130px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.analytics-bar {
+  width: 100%;
+  min-height: 3px;
+  border-radius: 7px 7px 3px 3px;
+  background: linear-gradient(180deg,var(--orange),var(--blue));
+}
+
+.analytics-column small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.analytics-list {
+  display: grid;
+  gap: 13px;
+  margin-top: 13px;
+}
+
+.analytics-list-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.analytics-list-head span {
+  color: var(--muted);
+}
+
+.analytics-list-item .bar {
+  height: 8px;
+  margin: 7px 0 0;
+}
+
+.analytics-note {
+  margin-top: 13px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.theme-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.theme-preview {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  text-align: center;
+  background: var(--panel2);
+}
+
+.theme-preview-art {
+  height: 55px;
+  border-radius: 9px;
+  margin-bottom: 8px;
+  background: linear-gradient(160deg,#F8CE91,#D88756,#263B50);
+}
+
+.theme-preview.ocean .theme-preview-art {
+  background: linear-gradient(160deg,#1D6481,#0D2946,#071522);
+}
+
+.theme-preview.obsidian .theme-preview-art {
+  background: linear-gradient(160deg,#6D5940,#252321,#080808);
+}
+
+.theme-preview strong {
+  display: block;
+  font-size: 11px;
+}
+
+.theme-preview small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+}
 </style>
 </head>
 <body><main>
@@ -799,59 +1074,186 @@ main {
     <span class="muted">Settings & tools</span>
   </div>
 
-  <div class="sectionhead" style="margin-top:22px">
-    <h2>Appearance & Themes</h2>
+  <p class="sub">
+    Explore your performance, personalise your experience and manage your data.
+  </p>
+
+  <div class="more-list">
+
+    <button type="button" class="more-item"
+      onclick="showView('analytics')">
+      <span class="more-item-icon">▥</span>
+      <span class="more-item-copy">
+        <strong>Detailed Analytics</strong>
+        <small>In-depth stats and habit insights</small>
+      </span>
+      <span class="more-arrow">›</span>
+    </button>
+
+    <button type="button" class="more-item"
+      onclick="showView('appearance')">
+      <span class="more-item-icon">◉</span>
+      <span class="more-item-copy">
+        <strong>Appearance & Themes</strong>
+        <small>Personalise your app experience</small>
+      </span>
+      <span class="more-arrow">›</span>
+    </button>
+
+    <div class="more-item planned">
+      <span class="more-item-icon">♬</span>
+      <span class="more-item-copy">
+        <strong>Reminders</strong>
+        <small>Daily reminders and notification preferences</small>
+      </span>
+      <span class="more-status">Deferred</span>
+    </div>
+
+    <div class="more-item planned">
+      <span class="more-item-icon">🏆</span>
+      <span class="more-item-copy">
+        <strong>Challenge History</strong>
+        <small>View your past challenge records</small>
+      </span>
+      <span class="more-status">Planned</span>
+    </div>
+
+    <button type="button" class="more-item"
+      onclick="showView('backup')">
+      <span class="more-item-icon">☁</span>
+      <span class="more-item-copy">
+        <strong>Backup & Restore</strong>
+        <small>Export and restore personal tracker data</small>
+      </span>
+      <span class="more-arrow">›</span>
+    </button>
+
+    <div class="more-item planned">
+      <span class="more-item-icon">⚙</span>
+      <span class="more-item-copy">
+        <strong>App Settings</strong>
+        <small>Manage app preferences</small>
+      </span>
+      <span class="more-status">Planned</span>
+    </div>
+
+  </div>
+</section>
+
+<section id="analyticsView" class="card hidden">
+  <div class="subpage-head">
+    <div>
+      <h2>Detailed Analytics</h2>
+      <p class="sub">Understand your consistency and progress.</p>
+    </div>
+    <button class="back-button" onclick="showView('more')">← More</button>
   </div>
 
-  <p class="sub">Automatic follows your local device time. Manual themes stay active until changed.</p>
+  <div class="range-toggle">
+    <button id="analyticsWeek" class="primary"
+      onclick="setAnalyticsRange('week')">This Week</button>
+    <button id="analyticsMonth"
+      onclick="setAnalyticsRange('month')">This Month</button>
+    <button id="analyticsAll"
+      onclick="setAnalyticsRange('all')">All Time</button>
+  </div>
+
+  <div id="analyticsContent"></div>
+</section>
+
+<section id="appearanceView" class="card hidden">
+  <div class="subpage-head">
+    <div>
+      <h2>Appearance & Themes</h2>
+      <p class="sub">Choose how Discipline Daily looks.</p>
+    </div>
+    <button class="back-button" onclick="showView('more')">← More</button>
+  </div>
+
+  <div class="sectionhead">
+    <h2>Theme Behaviour</h2>
+  </div>
 
   <div class="theme-option">
     <div>
-      <strong>Automatic</strong>
-      <p class="sub">Sunrise Peak during the day · Ocean Depth at night</p>
+      <strong>Automatic (Recommended)</strong>
+      <p class="sub">
+        Sunrise Peak from 6:00 AM to 6:59 PM.
+        Ocean Depth from 7:00 PM to 5:59 AM.
+      </p>
     </div>
     <button onclick="setThemePreference('automatic')">Select</button>
   </div>
 
   <div class="theme-option">
     <div>
-      <strong>Sunrise Peak</strong>
-      <p class="sub">Warm cream, peach and golden accents</p>
-    </div>
-    <button onclick="setThemePreference('sunrise')">Select</button>
-  </div>
-
-  <div class="theme-option">
-    <div>
-      <strong>Ocean Depth</strong>
-      <p class="sub">Deep navy, ocean blue and muted teal</p>
-    </div>
-    <button onclick="setThemePreference('ocean')">Select</button>
-  </div>
-
-  <div class="theme-option">
-    <div>
-      <strong>Obsidian Pro</strong>
-      <p class="sub">Matte black, graphite and champagne gold</p>
+      <strong>Obsidian Pro (Manual)</strong>
+      <p class="sub">
+        A consistent dark theme that stays active until you switch back.
+      </p>
     </div>
     <button onclick="setThemePreference('obsidian')">Select</button>
   </div>
 
   <p class="notice" id="themeStatus" role="status"></p>
 
-  <div class="sectionhead" style="margin-top:28px">
-    <h2>Privacy & Backups</h2>
+  <div class="sectionhead" style="margin-top:22px">
+    <h2>Theme Preview</h2>
   </div>
 
-  <p class="sub">Your habit data is saved in this browser on this device using local storage. The app has no analytics, advertising, account or cloud connection.</p>
+  <div class="theme-preview-grid">
+    <div class="theme-preview sunrise">
+      <div class="theme-preview-art"></div>
+      <strong>Sunrise Peak</strong>
+      <small>Day theme</small>
+    </div>
+
+    <div class="theme-preview ocean">
+      <div class="theme-preview-art"></div>
+      <strong>Ocean Depth</strong>
+      <small>Night theme</small>
+    </div>
+
+    <div class="theme-preview obsidian">
+      <div class="theme-preview-art"></div>
+      <strong>Obsidian Pro</strong>
+      <small>Manual theme</small>
+    </div>
+  </div>
+</section>
+
+<section id="backupView" class="card hidden">
+  <div class="subpage-head">
+    <div>
+      <h2>Backup & Restore</h2>
+      <p class="sub">Keep your personal tracker data safe.</p>
+    </div>
+    <button class="back-button" onclick="showView('more')">← More</button>
+  </div>
+
+  <div class="sectionhead">
+    <h2>Privacy & Storage</h2>
+  </div>
+
+  <p class="sub">
+    Your habit data is saved in this browser on this device using local storage.
+    The app has no analytics, advertising, account or cloud connection.
+  </p>
 
   <div class="row">
     <button style="flex:1" onclick="exportData()">Export backup</button>
-    <button style="flex:1" onclick="document.getElementById('importFile').click()">Import backup</button>
-    <input class="hidden" type="file" id="importFile" accept="application/json,.json" onchange="importData(event)">
+    <button style="flex:1"
+      onclick="document.getElementById('importFile').click()">
+      Import backup
+    </button>
+    <input class="hidden" type="file" id="importFile"
+      accept="application/json,.json" onchange="importData(event)">
   </div>
 
-  <p class="sub warn">Important: Do not clear browser website data unless you have exported a backup. Local storage is not encrypted.</p>
+  <p class="sub warn">
+    Important: Do not clear browser website data unless you have exported
+    a backup. Local storage is not encrypted.
+  </p>
 </section>
 </main>
 <script>
@@ -870,15 +1272,19 @@ const KEY="rk_private_habit_tracker_v1";
  // DISCIPLINE DAILY — THEME ENGINE
 const THEME_KEY = "discipline_daily_theme_preference_v1";
 
-function getThemePreference(){
-  try {
-    const saved = localStorage.getItem(THEME_KEY);
-    return ["automatic","sunrise","ocean","obsidian"].includes(saved)
-      ? saved
-      : "automatic";
-  } catch(e) {
-    return "automatic";
+function setThemePreference(preference){
+  if(!["automatic","obsidian"].includes(preference)){
+    return;
   }
+
+  themePreference = preference;
+
+  try {
+    localStorage.setItem(THEME_KEY,preference);
+  } catch(e) {}
+
+  applyTheme();
+  renderAppearance();
 }
 
 let themePreference = getThemePreference();
@@ -926,13 +1332,11 @@ function renderAppearance(){
   if(!status) return;
 
   const labels={
-    automatic:"Automatic mode",
-    sunrise:"Sunrise Peak — Manual",
-    ocean:"Ocean Depth — Manual",
-    obsidian:"Obsidian Pro — Manual"
+    automatic:"Selected: Automatic — Sunrise Peak by day, Ocean Depth at night",
+    obsidian:"Selected: Obsidian Pro — Manual"
   };
 
-  status.textContent="Selected: "+labels[themePreference];
+  status.textContent=labels[themePreference];
 }
   
 function initTheme(){
@@ -1491,24 +1895,272 @@ function deleteDayType(){
   render();
   showNotice("Day type deleted.");
 }
+let analyticsRange = "week";
+
+function setAnalyticsRange(range){
+  if(!["week","month","all"].includes(range)) return;
+
+  analyticsRange = range;
+  renderAnalytics();
+}
+
+function analyticsPeriodDays(){
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const elapsed = elapsedChallengeDays();
+  const results = [];
+
+  const weekStart = new Date(today);
+  const mondayOffset = (today.getDay() + 6) % 7;
+  weekStart.setDate(today.getDate() - mondayOffset);
+
+  for(let day=1;day<=elapsed;day++){
+    const date = new Date(state.startDate+"T12:00:00");
+    date.setDate(date.getDate()+day-1);
+    date.setHours(0,0,0,0);
+
+    let include = true;
+
+    if(analyticsRange === "week"){
+      include = date >= weekStart && date <= today;
+    }
+
+    if(analyticsRange === "month"){
+      include =
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear();
+    }
+
+    if(include){
+      const total = habitsForDay(day).length;
+      const done = completedCount(day);
+      const percent = total === 0
+        ? 0
+        : Math.round(done / total * 100);
+
+      results.push({day,date,total,done,percent});
+    }
+  }
+
+  return results;
+}
+
+function renderAnalytics(){
+  const container = document.getElementById("analyticsContent");
+  if(!container) return;
+
+  const entries = analyticsPeriodDays();
+
+  const elapsed = elapsedChallengeDays();
+  let submitted = 0;
+
+  for(let day=1;day<=elapsed;day++){
+    if(state.days[day]?.submitted) submitted++;
+  }
+
+  let checked = 0;
+  let possible = 0;
+
+  const typeStats = {};
+
+  entries.forEach(entry=>{
+    checked += entry.done;
+    possible += entry.total;
+
+    const type = state.dayTypes[entry.day] || "College day";
+
+    if(!typeStats[type]){
+      typeStats[type] = {done:0,total:0};
+    }
+
+    typeStats[type].done += entry.done;
+    typeStats[type].total += entry.total;
+  });
+
+  const periodPercent = possible
+    ? Math.round(checked / possible * 100)
+    : null;
+
+  const periodLabel = periodPercent === null
+    ? "—"
+    : periodPercent + "%";
+
+  const chartWidth = Math.max(280,entries.length*31);
+
+  const chartMarkup = entries.length
+    ? entries.map(entry=>{
+        const dateLabel = entry.date.toLocaleDateString(
+          undefined,{weekday:"short",day:"numeric"}
+        );
+
+        return `
+          <div class="analytics-column"
+            title="${esc(dateLabel)} · ${entry.percent}%">
+            <div class="analytics-bar-track">
+              <div class="analytics-bar"
+                style="height:${entry.percent}%"></div>
+            </div>
+            <small>${entry.date.getDate()}</small>
+          </div>
+        `;
+      }).join("")
+    : `<p class="sub">No elapsed challenge days in this period yet.</p>`;
+
+  const typeMarkup = Object.keys(typeStats).length
+    ? Object.keys(typeStats).map(type=>{
+        const item = typeStats[type];
+        const rate = item.total
+          ? Math.round(item.done / item.total * 100)
+          : 0;
+
+        return `
+          <div class="analytics-list-item">
+            <div class="analytics-list-head">
+              <strong>${esc(type)}</strong>
+              <span>${item.total ? rate+"%" : "N/A"}</span>
+            </div>
+            <div class="bar green">
+              <div style="width:${rate}%"></div>
+            </div>
+          </div>
+        `;
+      }).join("")
+    : `<p class="sub">No day-type data available for this period.</p>`;
+
+  const habitMarkup = state.habits.map(habit=>{
+    let applicable = 0;
+    let done = 0;
+
+    entries.forEach(entry=>{
+      const applies = habitsForDay(entry.day)
+        .some(h=>h.id===habit.id);
+
+      if(applies){
+        applicable++;
+
+        if(state.days[entry.day]?.checks?.[habit.id] === true){
+          done++;
+        }
+      }
+    });
+
+    if(!applicable) return "";
+
+    const rate = Math.round(done / applicable * 100);
+
+    return `
+      <div class="analytics-list-item">
+        <div class="analytics-list-head">
+          <strong>${esc(habit.label)}</strong>
+          <span>${rate}% · ${done}/${applicable} days</span>
+        </div>
+        <div class="bar">
+          <div style="width:${rate}%"></div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  const selectedRange = {
+    week:"This Week",
+    month:"This Month",
+    all:"All Time"
+  };
+
+  container.innerHTML = `
+    <div class="analytics-summary">
+      <div class="analytics-stat">
+        <small>Current Streak</small>
+        <strong>${streak()}</strong>
+      </div>
+
+      <div class="analytics-stat">
+        <small>Avg Habits / Day</small>
+        <strong>${averageHabitsPerDay()}</strong>
+      </div>
+
+      <div class="analytics-stat">
+        <small>Period Completion</small>
+        <strong>${periodLabel}</strong>
+      </div>
+    </div>
+
+    <div class="analytics-panel">
+      <div class="sectionhead">
+        <h3>Habit Completion Trend</h3>
+        <span class="muted">${entries.length} days</span>
+      </div>
+
+      <div class="analytics-chart-scroll">
+        <div class="analytics-chart" style="min-width:${chartWidth}px">
+          ${chartMarkup}
+        </div>
+      </div>
+
+      <p class="analytics-note">
+        ${selectedRange[analyticsRange]} · Daily completion is calculated
+        from checked habits and applicable habits.
+      </p>
+    </div>
+
+    <div class="analytics-panel">
+      <h3>Day Type Performance</h3>
+      <div class="analytics-list">${typeMarkup}</div>
+    </div>
+
+    <div class="analytics-panel">
+      <h3>Habit Consistency</h3>
+      <div class="analytics-list">
+        ${habitMarkup || '<p class="sub">No applicable habits in this period.</p>'}
+      </div>
+    </div>
+
+    <p class="analytics-note">
+      Challenge submissions: ${submitted}/${elapsed} elapsed days.
+      Unsubmitted days are measured using their saved checkboxes.
+      Future days are excluded.
+    </p>
+  `;
+
+  document.getElementById("analyticsWeek")
+    .classList.toggle("primary",analyticsRange==="week");
+
+  document.getElementById("analyticsMonth")
+    .classList.toggle("primary",analyticsRange==="month");
+
+  document.getElementById("analyticsAll")
+    .classList.toggle("primary",analyticsRange==="all");
+}
 function showView(v){
-  const views=["today","month","edit","more"];
+  const views=[
+    "today","month","edit","more",
+    "analytics","appearance","backup"
+  ];
 
   views.forEach(k=>{
-    document.getElementById(k+"View").classList.toggle("hidden",k!==v);
+    const element=document.getElementById(k+"View");
+    if(element){
+      element.classList.toggle("hidden",k!==v);
+    }
   });
+
+  const activeTab = [
+    "analytics","appearance","backup"
+  ].includes(v) ? "more" : v;
 
   const tabs=["Today","Month","Edit","More"];
 
   tabs.forEach(k=>{
     document.getElementById("tab"+k).classList.toggle(
       "primary",
-      k.toLowerCase()===v
+      k.toLowerCase()===activeTab
     );
   });
 
   if(v==="edit") render();
-  if(v==="more") renderAppearance();
+  if(v==="analytics") renderAnalytics();
+  if(v==="appearance") renderAppearance();
 }
 function renameHabit(id){const h=state.habits.find(x=>x.id===id);if(!h)return;const v=prompt("Edit habit name:",h.label);if(v&&v.trim()){h.label=v.trim();save();render();}}
 function deleteHabit(id){if(!confirm("Delete this habit from the checklist? This changes scoring for the challenge."))return;state.habits=state.habits.filter(x=>x.id!==id);save();render();}
