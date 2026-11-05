@@ -479,6 +479,7 @@ main {
 
 .tabs {
   position: fixed;
+  top: auto;
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
@@ -852,9 +853,6 @@ main {
 
   <p class="sub warn">Important: Do not clear browser website data unless you have exported a backup. Local storage is not encrypted.</p>
 </section>
-  
-<section class="card"><h2 style="font-size:17px;margin-top:0">Privacy & backups</h2><p class="sub">This standalone file has no analytics, advertising, account, or cloud connection. Your habit data is saved in this browser on this device using local storage.</p><div class="row"><button style="flex:1" onclick="exportData()">Export backup</button><button style="flex:1" onclick="document.getElementById('importFile').click()">Import backup</button><input class="hidden" type="file" id="importFile" accept="application/json,.json" onchange="importData(event)"></div><p class="sub warn">Important: if you open this file from different locations or browsers, they may not share the same storage. Do not clear browser website data unless you have exported a backup. Local storage is not encrypted.</p></section>
-<div class="footer">Private by design: the app itself makes no network requests. Browser/OS backup behavior is controlled by your device settings. This file cannot prevent someone with access to your unlocked phone from seeing the tracker.</div>
 </main>
 <script>
 const DEFAULTS=[
