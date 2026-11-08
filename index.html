@@ -2420,8 +2420,9 @@ function renderAnalytics(){
     ? (totals.done/entries.length).toFixed(1)
     : "0.0";
 
-  const submitted = entries.filter(e=>e.submitted).length;
-  const notSubmitted = entries.filter(e=>!e.submitted).length;
+const submitted = entries.filter(e=>dayStatus(e.day)==="Submitted").length;
+const inProgress = entries.filter(e=>dayStatus(e.day)==="In progress").length;
+const notSubmitted = entries.filter(e=>dayStatus(e.day)==="Not submitted").length;
 
   const habitStats = state.habits.map(habit=>{
     let applicable=0;
@@ -2643,11 +2644,12 @@ function renderAnalytics(){
     <div class="analytics-panel analytics-status-panel">
       <h3>Day Status Breakdown</h3>
       <div class="analytics-status-grid">
-        <div><strong>${perfectDays}</strong><small>Perfect days</small></div>
-        <div><strong>${submitted}</strong><small>Submitted</small></div>
-        <div><strong>${notSubmitted}</strong><small>Not submitted</small></div>
-        <div><strong>${applicableDays}</strong><small>Days with habits</small></div>
-      </div>
+  <div><strong>${perfectDays}</strong><small>Perfect days</small></div>
+  <div><strong>${submitted}</strong><small>Submitted</small></div>
+  <div><strong>${inProgress}</strong><small>In progress</small></div>
+  <div><strong>${notSubmitted}</strong><small>Not submitted</small></div>
+  <div><strong>${applicableDays}</strong><small>Days with habits</small></div>
+</div>
       <p class="analytics-note">
         Saved checkmarks count even on unsubmitted days. Future days are excluded.
         Days with zero applicable habits are not counted as perfect days.
