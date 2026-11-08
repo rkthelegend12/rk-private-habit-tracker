@@ -867,6 +867,283 @@ button.more-item {
   color: var(--muted);
   font-size: 9px;
 }
+/* STAGE 3 — DETAILED ANALYTICS DESIGN */
+
+.analytics-summary-four {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.analytics-period-label {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:14px 0;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.analytics-grid {
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0;
+}
+
+.analytics-panel-heading {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:13px;
+}
+
+.analytics-panel-heading > span {
+  width:38px;
+  height:38px;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:var(--bg);
+  color:var(--orange);
+  font-size:20px;
+}
+
+.analytics-panel-heading h3 {
+  margin:0;
+  font-size:15px;
+}
+
+.analytics-panel-heading small {
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.analytics-scale {
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:9px;
+  margin:0 2px 5px;
+}
+
+.analytics-chart {
+  height:145px;
+  display:flex;
+  align-items:stretch;
+  gap:7px;
+  padding:5px 2px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.analytics-column {
+  flex:1;
+  min-width:25px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  gap:5px;
+}
+
+.analytics-bar-track {
+  height:112px;
+  width:100%;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  border-bottom:1px solid var(--line);
+  background:repeating-linear-gradient(
+    to top,
+    transparent 0,
+    transparent 27px,
+    var(--line) 28px,
+    transparent 29px
+  );
+}
+
+.analytics-bar {
+  width:72%;
+  min-height:3px;
+  border-radius:7px 7px 2px 2px;
+  background:linear-gradient(180deg,var(--orange),var(--blue));
+}
+
+.analytics-column small {
+  color:var(--muted);
+  font-size:9px;
+}
+
+.analytics-na {
+  color:var(--muted);
+  font-size:9px;
+  padding-bottom:5px;
+}
+
+.analytics-donut-wrap {
+  display:flex;
+  justify-content:center;
+  padding:8px 0;
+}
+
+.analytics-donut {
+  width:145px;
+  height:145px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:conic-gradient(
+    var(--orange) var(--completion),
+    var(--bar-bg) var(--completion)
+  );
+  position:relative;
+}
+
+.analytics-donut::before {
+  content:"";
+  position:absolute;
+  inset:12px;
+  border-radius:50%;
+  background:var(--panel2);
+}
+
+.analytics-donut > div {
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.analytics-donut strong {
+  font-size:27px;
+}
+
+.analytics-donut small {
+  color:var(--muted);
+  font-size:11px;
+}
+
+.analytics-list {
+  display:grid;
+  gap:13px;
+  margin-top:12px;
+}
+
+.analytics-list-item {
+  min-width:0;
+}
+
+.analytics-list-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+  font-size:12px;
+}
+
+.analytics-list-head strong {
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.analytics-list-head span {
+  flex-shrink:0;
+  font-weight:700;
+}
+
+.analytics-progress {
+  height:8px;
+  border-radius:99px;
+  overflow:hidden;
+  background:var(--bar-bg);
+  margin-top:7px;
+}
+
+.analytics-progress > div {
+  height:100%;
+  border-radius:99px;
+  background:linear-gradient(90deg,var(--orange),var(--blue));
+}
+
+.analytics-detail {
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.analytics-insights {
+  display:grid;
+  gap:9px;
+  margin-top:12px;
+}
+
+.analytics-insight {
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:var(--bg);
+}
+
+.analytics-insight > span {
+  font-size:21px;
+}
+
+.analytics-insight strong {
+  font-size:13px;
+}
+
+.analytics-insight p {
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+.analytics-status-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin-top:12px;
+}
+
+.analytics-status-grid > div {
+  padding:11px;
+  border-radius:12px;
+  background:var(--bg);
+  text-align:center;
+}
+
+.analytics-status-grid strong {
+  display:block;
+  font-size:20px;
+}
+
+.analytics-status-grid small {
+  color:var(--muted);
+  font-size:10px;
+}
+
+.analytics-status-panel h3 {
+  margin:0;
+  font-size:15px;
+}
+
+@media(min-width:600px) {
+  .analytics-summary-four {
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+
+  .analytics-grid {
+    grid-template-columns:1fr 1fr;
+    gap:0 12px;
+  }
+}
 /* STAGE 3 — SECTION-SPECIFIC BRANDING */
 
 body.view-month .today-progress-card {
@@ -1919,51 +2196,212 @@ let analyticsRange = "week";
 
 function setAnalyticsRange(range){
   if(!["week","month","all"].includes(range)) return;
-
   analyticsRange = range;
   renderAnalytics();
 }
 
-function analyticsPeriodDays(){
+function analyticsDate(day){
+  const date = new Date(state.startDate+"T12:00:00");
+  date.setDate(date.getDate()+day-1);
+  date.setHours(0,0,0,0);
+  return date;
+}
+
+function analyticsPeriodBounds(){
   const today = new Date();
   today.setHours(0,0,0,0);
 
-  const elapsed = elapsedChallengeDays();
-  const results = [];
+  if(analyticsRange === "all"){
+    return {
+      start: analyticsDate(1),
+      end: today
+    };
+  }
 
-  const weekStart = new Date(today);
-  const mondayOffset = (today.getDay() + 6) % 7;
-  weekStart.setDate(today.getDate() - mondayOffset);
+  if(analyticsRange === "week"){
+    const start = new Date(today);
+    start.setDate(today.getDate()-(today.getDay()+6)%7);
+    const end = new Date(start);
+    end.setDate(start.getDate()+6);
+    return {start,end};
+  }
 
-  for(let day=1;day<=elapsed;day++){
-    const date = new Date(state.startDate+"T12:00:00");
-    date.setDate(date.getDate()+day-1);
-    date.setHours(0,0,0,0);
+  const start = new Date(today.getFullYear(),today.getMonth(),1);
+  const end = new Date(today.getFullYear(),today.getMonth()+1,0);
+  return {start,end};
+}
 
-    let include = true;
+function analyticsEntriesBetween(start,end){
+  const today = new Date();
+  today.setHours(0,0,0,0);
 
-    if(analyticsRange === "week"){
-      include = date >= weekStart && date <= today;
+  const challengeStart = analyticsDate(1);
+  const challengeEnd = analyticsDate(state.durationDays);
+  const limit = new Date(Math.min(today,challengeEnd));
+
+  const from = new Date(Math.max(start,challengeStart));
+  const to = new Date(Math.min(end,limit));
+
+  if(from>to || elapsedChallengeDays()===0) return [];
+
+  const entries = [];
+
+  for(let day=1;day<=elapsedChallengeDays();day++){
+    const date = analyticsDate(day);
+    if(date<from || date>to) continue;
+
+    const total = habitsForDay(day).length;
+    const done = completedCount(day);
+    const percent = total
+      ? Math.round(done/total*100)
+      : null;
+
+    entries.push({
+      day,
+      date,
+      total,
+      done,
+      percent,
+      submitted:!!state.days[day]?.submitted,
+      perfect:total>0 && done===total
+    });
+  }
+
+  return entries;
+}
+
+function analyticsPeriodDays(){
+  const bounds = analyticsPeriodBounds();
+  return analyticsEntriesBetween(bounds.start,bounds.end);
+}
+
+function analyticsPreviousPeriod(){
+  if(analyticsRange==="all") return [];
+
+  const bounds = analyticsPeriodBounds();
+  let start,end;
+
+  if(analyticsRange==="week"){
+    start = new Date(bounds.start);
+    start.setDate(start.getDate()-7);
+    end = new Date(bounds.end);
+    end.setDate(end.getDate()-7);
+  } else {
+    start = new Date(
+      bounds.start.getFullYear(),
+      bounds.start.getMonth()-1,
+      1
+    );
+    end = new Date(
+      bounds.start.getFullYear(),
+      bounds.start.getMonth(),
+      0
+    );
+  }
+
+  return analyticsEntriesBetween(start,end);
+}
+
+function analyticsRate(entries){
+  const done = entries.reduce((sum,e)=>sum+e.done,0);
+  const total = entries.reduce((sum,e)=>sum+e.total,0);
+
+  return {
+    done,
+    total,
+    rate:total ? Math.round(done/total*100) : null
+  };
+}
+
+function analyticsDateLabel(date){
+  return date.toLocaleDateString(undefined,{
+    weekday:"short",
+    day:"numeric",
+    month:"short"
+  });
+}
+
+function analyticsInsights(entries,previous,habitStats){
+  const insights = [];
+
+  const perfect = entries.filter(e=>e.perfect).length;
+
+  if(entries.length){
+    const best = [...entries]
+      .filter(e=>e.total>0)
+      .sort((a,b)=>b.percent-a.percent)[0];
+
+    if(best){
+      insights.push({
+        icon:"🏆",
+        title:"Best Performance",
+        text:`Your strongest day was ${analyticsDateLabel(best.date)} with ${best.percent}% completion.`
+      });
     }
 
-    if(analyticsRange === "month"){
-      include =
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear();
-    }
-
-    if(include){
-      const total = habitsForDay(day).length;
-      const done = completedCount(day);
-      const percent = total === 0
-        ? 0
-        : Math.round(done / total * 100);
-
-      results.push({day,date,total,done,percent});
+    if(perfect){
+      insights.push({
+        icon:"🎯",
+        title:"Perfect Days",
+        text:`You completed every applicable habit on ${perfect} ${perfect===1?"day":"days"} in this period.`
+      });
+    } else {
+      insights.push({
+        icon:"🎯",
+        title:"Keep Building",
+        text:"You haven't recorded a perfect day in this period yet. Focus on completing all applicable habits."
+      });
     }
   }
 
-  return results;
+  const currentRate = analyticsRate(entries);
+  const previousRate = analyticsRate(previous);
+
+  if(previous.length && currentRate.rate!==null && previousRate.rate!==null){
+    const difference = currentRate.rate-previousRate.rate;
+
+    if(difference>0){
+      insights.push({
+        icon:"📈",
+        title:"Improving",
+        text:`Completion improved by ${difference} percentage points compared with the previous period.`
+      });
+    } else if(difference<0){
+      insights.push({
+        icon:"🔎",
+        title:"Room to Improve",
+        text:`Completion decreased by ${Math.abs(difference)} percentage points compared with the previous period.`
+      });
+    } else {
+      insights.push({
+        icon:"⚖️",
+        title:"Consistent",
+        text:"Your completion rate is unchanged from the previous period."
+      });
+    }
+  } else {
+    insights.push({
+      icon:"📊",
+      title:"Building Your Baseline",
+      text:"More historical data is needed before a reliable period comparison is available."
+    });
+  }
+
+  const ranked = habitStats
+    .filter(h=>h.applicable>0)
+    .sort((a,b)=>a.rate-b.rate);
+
+  if(ranked.length){
+    const lowest = ranked[0];
+
+    insights.push({
+      icon:"🎯",
+      title:"Focus Area",
+      text:`${lowest.label} currently has your lowest completion rate at ${lowest.rate}%.`
+    });
+  }
+
+  return insights.slice(0,3);
 }
 
 function renderAnalytics(){
@@ -1971,186 +2409,257 @@ function renderAnalytics(){
   if(!container) return;
 
   const entries = analyticsPeriodDays();
+  const previous = analyticsPreviousPeriod();
+  const bounds = analyticsPeriodBounds();
 
-  const elapsed = elapsedChallengeDays();
-  let submitted = 0;
+  const totals = analyticsRate(entries);
+  const perfectDays = entries.filter(e=>e.perfect).length;
+  const applicableDays = entries.filter(e=>e.total>0).length;
 
-  for(let day=1;day<=elapsed;day++){
-    if(state.days[day]?.submitted) submitted++;
-  }
+  const average = entries.length
+    ? (totals.done/entries.length).toFixed(1)
+    : "0.0";
 
-  let checked = 0;
-  let possible = 0;
+  const submitted = entries.filter(e=>e.submitted).length;
+  const notSubmitted = entries.filter(e=>!e.submitted).length;
 
-  const typeStats = {};
-
-  entries.forEach(entry=>{
-    checked += entry.done;
-    possible += entry.total;
-
-    const type = state.dayTypes[entry.day] || "College day";
-
-    if(!typeStats[type]){
-      typeStats[type] = {done:0,total:0};
-    }
-
-    typeStats[type].done += entry.done;
-    typeStats[type].total += entry.total;
-  });
-
-  const periodPercent = possible
-    ? Math.round(checked / possible * 100)
-    : null;
-
-  const periodLabel = periodPercent === null
-    ? "—"
-    : periodPercent + "%";
-
-  const chartWidth = Math.max(280,entries.length*31);
-
-  const chartMarkup = entries.length
-    ? entries.map(entry=>{
-        const dateLabel = entry.date.toLocaleDateString(
-          undefined,{weekday:"short",day:"numeric"}
-        );
-
-        return `
-          <div class="analytics-column"
-            title="${esc(dateLabel)} · ${entry.percent}%">
-            <div class="analytics-bar-track">
-              <div class="analytics-bar"
-                style="height:${entry.percent}%"></div>
-            </div>
-            <small>${entry.date.getDate()}</small>
-          </div>
-        `;
-      }).join("")
-    : `<p class="sub">No elapsed challenge days in this period yet.</p>`;
-
-  const typeMarkup = Object.keys(typeStats).length
-    ? Object.keys(typeStats).map(type=>{
-        const item = typeStats[type];
-        const rate = item.total
-          ? Math.round(item.done / item.total * 100)
-          : 0;
-
-        return `
-          <div class="analytics-list-item">
-            <div class="analytics-list-head">
-              <strong>${esc(type)}</strong>
-              <span>${item.total ? rate+"%" : "N/A"}</span>
-            </div>
-            <div class="bar green">
-              <div style="width:${rate}%"></div>
-            </div>
-          </div>
-        `;
-      }).join("")
-    : `<p class="sub">No day-type data available for this period.</p>`;
-
-  const habitMarkup = state.habits.map(habit=>{
-    let applicable = 0;
-    let done = 0;
+  const habitStats = state.habits.map(habit=>{
+    let applicable=0;
+    let done=0;
 
     entries.forEach(entry=>{
-      const applies = habitsForDay(entry.day)
-        .some(h=>h.id===habit.id);
-
-      if(applies){
+      if(habitsForDay(entry.day).some(h=>h.id===habit.id)){
         applicable++;
-
-        if(state.days[entry.day]?.checks?.[habit.id] === true){
+        if(state.days[entry.day]?.checks?.[habit.id]===true){
           done++;
         }
       }
     });
 
-    if(!applicable) return "";
+    return {
+      label:habit.label,
+      applicable,
+      done,
+      rate:applicable ? Math.round(done/applicable*100) : 0
+    };
+  }).filter(h=>h.applicable>0)
+    .sort((a,b)=>b.rate-a.rate);
 
-    const rate = Math.round(done / applicable * 100);
+  const typeStats={};
+
+  entries.forEach(entry=>{
+    const type=state.dayTypes[entry.day]||"College day";
+
+    if(!typeStats[type]){
+      typeStats[type]={done:0,total:0,days:0};
+    }
+
+    typeStats[type].done+=entry.done;
+    typeStats[type].total+=entry.total;
+    typeStats[type].days++;
+  });
+
+  const typeMarkup=Object.entries(typeStats).map(([type,item])=>{
+    const rate=item.total
+      ? Math.round(item.done/item.total*100)
+      : null;
 
     return `
       <div class="analytics-list-item">
         <div class="analytics-list-head">
-          <strong>${esc(habit.label)}</strong>
-          <span>${rate}% · ${done}/${applicable} days</span>
+          <strong>${esc(type)}</strong>
+          <span>${rate===null?"N/A":rate+"%"}</span>
         </div>
-        <div class="bar">
-          <div style="width:${rate}%"></div>
+        <div class="analytics-progress">
+          <div style="width:${rate===null?0:rate}%"></div>
         </div>
+        <small class="analytics-detail">
+          ${item.done}/${item.total} habits · ${item.days} days
+        </small>
       </div>
     `;
   }).join("");
 
-  const selectedRange = {
+  const habitMarkup=habitStats.map(habit=>`
+    <div class="analytics-list-item">
+      <div class="analytics-list-head">
+        <strong>${esc(habit.label)}</strong>
+        <span>${habit.rate}%</span>
+      </div>
+      <div class="analytics-progress">
+        <div style="width:${habit.rate}%"></div>
+      </div>
+      <small class="analytics-detail">
+        ${habit.done}/${habit.applicable} applicable days
+      </small>
+    </div>
+  `).join("");
+
+  const chartMarkup=entries.length
+    ? entries.map(entry=>`
+      <div class="analytics-column"
+        title="${esc(analyticsDateLabel(entry.date))}: ${entry.percent===null?"N/A":entry.percent+"%"}">
+        <div class="analytics-bar-track">
+          ${entry.percent===null
+            ? '<div class="analytics-na">N/A</div>'
+            : `<div class="analytics-bar" style="height:${Math.max(entry.percent,2)}%"></div>`
+          }
+        </div>
+        <small>${entry.date.getDate()}</small>
+      </div>
+    `).join("")
+    : '<p class="sub">No elapsed challenge days in this period yet.</p>';
+
+  const insights=analyticsInsights(entries,previous,habitStats);
+
+  const insightMarkup=insights.map(item=>`
+    <div class="analytics-insight">
+      <span>${item.icon}</span>
+      <div>
+        <strong>${item.title}</strong>
+        <p>${item.text}</p>
+      </div>
+    </div>
+  `).join("");
+
+  const completion=totals.rate===null?0:totals.rate;
+
+  const dateLabel=entries.length
+    ? `${analyticsDateLabel(entries[0].date)} – ${analyticsDateLabel(entries[entries.length-1].date)}`
+    : "No elapsed dates";
+
+  const periodName={
     week:"This Week",
     month:"This Month",
     all:"All Time"
-  };
+  }[analyticsRange];
 
-  container.innerHTML = `
-    <div class="analytics-summary">
+  container.innerHTML=`
+    <div class="analytics-period-label">
+      <span>📅 ${dateLabel}</span>
+      <span>${entries.length} elapsed days</span>
+    </div>
+
+    <div class="analytics-summary analytics-summary-four">
       <div class="analytics-stat">
         <small>Current Streak</small>
         <strong>${streak()}</strong>
       </div>
-
-      <div class="analytics-stat">
-        <small>Avg Habits / Day</small>
-        <strong>${averageHabitsPerDay()}</strong>
-      </div>
-
       <div class="analytics-stat">
         <small>Period Completion</small>
-        <strong>${periodLabel}</strong>
+        <strong>${totals.rate===null?"—":totals.rate+"%"}</strong>
+      </div>
+      <div class="analytics-stat">
+        <small>Avg Habits / Day</small>
+        <strong>${average}</strong>
+      </div>
+      <div class="analytics-stat">
+        <small>Perfect Days</small>
+        <strong>${perfectDays}/${entries.length}</strong>
       </div>
     </div>
 
-    <div class="analytics-panel">
-      <div class="sectionhead">
-        <h3>Habit Completion Trend</h3>
-        <span class="muted">${entries.length} days</span>
+    <div class="analytics-grid">
+      <div class="analytics-panel">
+        <div class="analytics-panel-heading">
+          <span>📊</span>
+          <div>
+            <h3>Habit Completion Trend</h3>
+            <small>Daily completion percentage</small>
+          </div>
+        </div>
+        <div class="analytics-scale">
+          <span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span>
+        </div>
+        <div class="analytics-chart-scroll">
+          <div class="analytics-chart" style="min-width:${Math.max(280,entries.length*34)}px">
+            ${chartMarkup}
+          </div>
+        </div>
+        <p class="analytics-note">${periodName} · Based on applicable habits.</p>
       </div>
 
-      <div class="analytics-chart-scroll">
-        <div class="analytics-chart" style="min-width:${chartWidth}px">
-          ${chartMarkup}
+      <div class="analytics-panel">
+        <div class="analytics-panel-heading">
+          <span>◉</span>
+          <div>
+            <h3>Period Overview</h3>
+            <small>Overall habit completion</small>
+          </div>
+        </div>
+        <div class="analytics-donut-wrap">
+          <div class="analytics-donut" style="--completion:${completion}%">
+            <div>
+              <strong>${totals.rate===null?"—":totals.rate+"%"}</strong>
+              <small>Completed</small>
+            </div>
+          </div>
+        </div>
+        <p class="analytics-note">${totals.done}/${totals.total} habits completed</p>
+      </div>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="analytics-panel">
+        <div class="analytics-panel-heading">
+          <span>📅</span>
+          <div>
+            <h3>Day Type Performance</h3>
+            <small>Completion by day type</small>
+          </div>
+        </div>
+        <div class="analytics-list">
+          ${typeMarkup||'<p class="sub">No day-type data available.</p>'}
         </div>
       </div>
 
-      <p class="analytics-note">
-        ${selectedRange[analyticsRange]} · Daily completion is calculated
-        from checked habits and applicable habits.
-      </p>
-    </div>
-
-    <div class="analytics-panel">
-      <h3>Day Type Performance</h3>
-      <div class="analytics-list">${typeMarkup}</div>
-    </div>
-
-    <div class="analytics-panel">
-      <h3>Habit Consistency</h3>
-      <div class="analytics-list">
-        ${habitMarkup || '<p class="sub">No applicable habits in this period.</p>'}
+      <div class="analytics-panel">
+        <div class="analytics-panel-heading">
+          <span>🎯</span>
+          <div>
+            <h3>Habit Consistency</h3>
+            <small>Completion rate for each habit</small>
+          </div>
+        </div>
+        <div class="analytics-list">
+          ${habitMarkup||'<p class="sub">No applicable habits in this period.</p>'}
+        </div>
       </div>
     </div>
 
-    <p class="analytics-note">
-      Challenge submissions: ${submitted}/${elapsed} elapsed days.
-      Unsubmitted days are measured using their saved checkboxes.
-      Future days are excluded.
-    </p>
+    <div class="analytics-panel">
+      <div class="analytics-panel-heading">
+        <span>✨</span>
+        <div>
+          <h3>Key Insights</h3>
+          <small>Generated from your tracker data</small>
+        </div>
+      </div>
+      <div class="analytics-insights">
+        ${insightMarkup}
+      </div>
+    </div>
+
+    <div class="analytics-panel analytics-status-panel">
+      <h3>Day Status Breakdown</h3>
+      <div class="analytics-status-grid">
+        <div><strong>${perfectDays}</strong><small>Perfect days</small></div>
+        <div><strong>${submitted}</strong><small>Submitted</small></div>
+        <div><strong>${notSubmitted}</strong><small>Not submitted</small></div>
+        <div><strong>${applicableDays}</strong><small>Days with habits</small></div>
+      </div>
+      <p class="analytics-note">
+        Saved checkmarks count even on unsubmitted days. Future days are excluded.
+        Days with zero applicable habits are not counted as perfect days.
+      </p>
+    </div>
   `;
 
-  document.getElementById("analyticsWeek")
-    .classList.toggle("primary",analyticsRange==="week");
-
-  document.getElementById("analyticsMonth")
-    .classList.toggle("primary",analyticsRange==="month");
-
-  document.getElementById("analyticsAll")
-    .classList.toggle("primary",analyticsRange==="all");
+  ["Week","Month","All"].forEach((name,i)=>{
+    const range=["week","month","all"][i];
+    document.getElementById("analytics"+name)
+      ?.classList.toggle("primary",analyticsRange===range);
+  });
 }
 function showView(v){
   const views=[
