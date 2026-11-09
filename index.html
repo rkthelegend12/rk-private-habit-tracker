@@ -2836,6 +2836,105 @@ function createArchiveSnapshot(){
     }
   };
 }
+
+// CHALLENGE HISTORY — ARCHIVE VALIDATION
+
+function validateArchiveSnapshot(archive){
+  if(!archive || typeof archive!=="object"){
+    return false;
+  }
+
+  if(typeof archive.id!=="string" || !archive.id){
+    return false;
+  }
+
+  if(!archive.startDate || !archive.endDate){
+    return false;
+  }
+
+  if(!Number.isInteger(archive.durationDays) ||
+     archive.durationDays<1 ||
+     archive.durationDays>365){
+    return false;
+  }
+
+  if(!Array.isArray(archive.habits) ||
+     !archive.days ||
+     typeof archive.days!=="object" ||
+     !archive.dayTypes ||
+     typeof archive.dayTypes!=="object" ||
+     !archive.typeSettings ||
+     typeof archive.typeSettings!=="object" ||
+     !Array.isArray(archive.customDayTypes)){
+    return false;
+  }
+
+  if(!archive.metrics ||
+     !Number.isFinite(archive.metrics.completion) ||
+     !Number.isFinite(archive.metrics.completedHabits) ||
+     !Number.isFinite(archive.metrics.applicableHabits) ||
+     !Number.isFinite(archive.metrics.perfectDays) ||
+     !Number.isFinite(archive.metrics.submittedDays)){
+    return false;
+  }
+
+  return true;
+}
+
+// CHALLENGE HISTORY — SAFE ARCHIVE SAVE
+
+function saveArchiveSnapshot(){
+  const archive=createArchiveSnapshot();
+
+  if(!validateArchiveSnapshot(archive)){
+    showNotice("Archive validation failed. Your current challenge is unchanged.");
+    return false;
+  }
+
+  if(state.archives.some(item=>item.id===archive.id)){
+    showNotice("This challenge has already been archived.");
+    return false;
+  }
+
+  const previousArchives=state.archives;
+
+  state.archives=[
+    ...previousArchives,
+    archive
+  ];
+
+  if(!save()){
+    state.archives=previousArchives;
+    return false;
+  }
+
+  try {
+    const saved=JSON.parse(
+      localStorage.getItem(KEY)
+    );
+
+    const verified=Array.isArray(saved.archives) &&
+      saved.archives.some(item=>
+        item.id===archive.id &&
+        validateArchiveSnapshot(item)
+      );
+
+    if(!verified){
+      state.archives=previousArchives;
+      save();
+      showNotice("Archive verification failed. Your current challenge has not been reset.");
+      return false;
+    }
+
+    return true;
+
+  } catch(e) {
+    state.archives=previousArchives;
+    save();
+    showNotice("Could not verify the archive. Your current challenge has not been reset.");
+    return false;
+  }
+}
   
 function renderChallengeHistory(){
   const container=document.getElementById("historyContent");
