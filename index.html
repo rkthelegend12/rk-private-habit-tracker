@@ -867,6 +867,62 @@ button.more-item {
   color: var(--muted);
   font-size: 9px;
 }
+
+/* CHALLENGE HISTORY — INTERFACE */
+
+.history-current-progress {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.history-current-progress strong {
+  font-size:17px;
+}
+
+.history-current-progress span {
+  color:var(--muted);
+  font-size:11px;
+}
+
+.history-empty {
+  text-align:center;
+  padding:28px 16px;
+  border:1px dashed var(--line);
+  border-radius:15px;
+  background:var(--panel);
+}
+
+.history-empty span {
+  display:block;
+  font-size:35px;
+  margin-bottom:10px;
+}
+
+.history-empty strong {
+  display:block;
+  font-size:15px;
+}
+
+.history-empty p {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+  max-width:260px;
+  margin:8px auto 0;
+}
+
+.history-archive-placeholder {
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  margin-top:10px;
+  background:var(--panel);
+}
+
 /* STAGE 3 — DETAILED ANALYTICS DESIGN */
 
 .analytics-summary-four {
@@ -1434,15 +1490,15 @@ body.view-compact .challenge-progress-strip {
       <span class="more-status">Deferred</span>
     </div>
 
-    <div class="more-item planned">
-      <span class="more-item-icon">🏆</span>
-      <span class="more-item-copy">
-        <strong>Challenge History</strong>
-        <small>View your past challenge records</small>
-      </span>
-      <span class="more-status">Planned</span>
-    </div>
-
+    <button type="button" class="more-item"
+  onclick="showView('history')">
+  <span class="more-item-icon">🏆</span>
+  <span class="more-item-copy">
+    <strong>Challenge History</strong>
+    <small>View your past challenge records</small>
+  </span>
+  <span class="more-arrow">›</span>
+</button>
     <button type="button" class="more-item"
       onclick="showView('backup')">
       <span class="more-item-icon">☁</span>
@@ -1465,6 +1521,18 @@ body.view-compact .challenge-progress-strip {
   </div>
 </section>
 
+<section id="historyView" class="card hidden">
+  <div class="subpage-head">
+    <div>
+      <h2>Challenge History</h2>
+      <p class="sub">Your discipline journey, one challenge at a time.</p>
+    </div>
+    <button class="back-button" onclick="showView('more')">← More</button>
+  </div>
+
+  <div id="historyContent"></div>
+</section>
+  
 <section id="analyticsView" class="card hidden">
   <div class="subpage-head">
     <div>
@@ -2693,11 +2761,129 @@ const notSubmitted = entries.filter(e=>dayStatus(e.day)==="Not submitted").lengt
       ?.classList.toggle("primary",analyticsRange===range);
   });
 }
+function renderChallengeHistory(){
+  const container=document.getElementById("historyContent");
+  if(!container)return;
+
+  const elapsed=elapsedChallengeDays();
+  const totalHabits=state.habits.length;
+  const end=new Date(state.startDate+"T12:00:00");
+  end.setDate(end.getDate()+state.durationDays-1);
+
+  let done=0;
+  let opportunities=0;
+  let perfect=0;
+  let submitted=0;
+
+  for(let day=1;day<=elapsed;day++){
+    const applicable=habitsForDay(day);
+    const completed=completedCount(day);
+
+    done+=completed;
+    opportunities+=applicable.length;
+
+    if(applicable.length>0 && completed===applicable.length){
+      perfect++;
+    }
+
+    if(state.days[day]?.submitted){
+      submitted++;
+    }
+  }
+
+  const completion=opportunities
+    ? Math.round(done/opportunities*100)
+    : 0;
+
+  const endLabel=end.toLocaleDateString("en-IN",{
+    day:"numeric",month:"short",year:"numeric"
+  });
+
+  const startLabel=new Date(
+    state.startDate+"T12:00:00"
+  ).toLocaleDateString("en-IN",{
+    day:"numeric",month:"short",year:"numeric"
+  });
+
+  container.innerHTML=`
+    <div class="analytics-panel">
+      <div class="analytics-panel-heading">
+        <span>🏔️</span>
+        <div>
+          <h3>Current Challenge</h3>
+          <small>Your active discipline journey</small>
+        </div>
+      </div>
+
+      <div class="history-current-progress">
+        <strong>Day ${elapsed} / ${state.durationDays}</strong>
+        <span>${completion}% habit completion</span>
+      </div>
+
+      <div class="bar">
+        <div style="width:${completion}%"></div>
+      </div>
+
+      <p class="analytics-note">
+        ${startLabel} – ${endLabel}
+      </p>
+
+      <div class="analytics-summary">
+        <div class="analytics-stat">
+          <small>Perfect Days</small>
+          <strong>${perfect}</strong>
+        </div>
+        <div class="analytics-stat">
+          <small>Submitted Days</small>
+          <strong>${submitted}</strong>
+        </div>
+        <div class="analytics-stat">
+          <small>Days Left</small>
+          <strong>${daysLeft()}</strong>
+        </div>
+      </div>
+
+      <button class="primary" block disabled>
+        Archive & Start New Challenge
+      </button>
+
+      <p class="analytics-note">
+        Challenge archiving will be available in the next implementation stage.
+      </p>
+    </div>
+
+    <div class="analytics-panel">
+      <div class="analytics-panel-heading">
+        <span>📚</span>
+        <div>
+          <h3>Previous Challenges</h3>
+          <small>Your archived discipline records</small>
+        </div>
+      </div>
+
+      ${state.archives.length
+        ? state.archives.map((archive,index)=>`
+          <div class="history-archive-placeholder">
+            <strong>Challenge ${String(index+1).padStart(2,"0")}</strong>
+            <p class="analytics-note">Archived challenge record</p>
+          </div>
+        `).join("")
+        : `
+          <div class="history-empty">
+            <span>🏆</span>
+            <strong>Your journey starts here</strong>
+            <p>No archived challenges yet. Your completed challenges will appear here after you archive them.</p>
+          </div>
+        `
+      }
+    </div>
+  `;
+}
 function showView(v){
   const views=[
-    "today","month","edit","more",
-    "analytics","appearance","backup"
-  ];
+  "today","month","edit","more",
+  "analytics","appearance","backup","history"
+];
 
   views.forEach(k=>{
     const element=document.getElementById(k+"View");
@@ -2718,9 +2904,9 @@ function showView(v){
     document.body.classList.add("view-compact");
   }
 
-  const activeTab = [
-    "analytics","appearance","backup"
-  ].includes(v) ? "more" : v;
+ const activeTab = [
+  "analytics","appearance","backup","history"
+].includes(v) ? "more" : v;
 
   const tabs=["Today","Month","Edit","More"];
 
@@ -2734,6 +2920,7 @@ function showView(v){
   if(v==="edit") render();
   if(v==="analytics") renderAnalytics();
   if(v==="appearance") renderAppearance();
+  if(v==="history") renderChallengeHistory();
 }
 function renameHabit(id){const h=state.habits.find(x=>x.id===id);if(!h)return;const v=prompt("Edit habit name:",h.label);if(v&&v.trim()){h.label=v.trim();save();render();}}
 function deleteHabit(id){if(!confirm("Delete this habit from the checklist? This changes scoring for the challenge."))return;state.habits=state.habits.filter(x=>x.id!==id);save();render();}
