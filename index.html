@@ -3036,7 +3036,129 @@ function saveArchiveSnapshot(){
     return false;
   }
 }
-  
+
+// CHALLENGE HISTORY — ATOMIC ARCHIVE & NEW CHALLENGE TRANSACTION
+
+function archiveAndStartNewChallenge(mode,startDate,durationDays){
+  let nextChallenge;
+
+  // Step 1: Prepare and validate the new challenge without
+  // changing the current active challenge.
+  try {
+    nextChallenge=createNewChallengeState(
+      mode,
+      startDate,
+      durationDays
+    );
+  } catch(error) {
+    showNotice(error.message || "New challenge setup failed.");
+    return false;
+  }
+
+  if(!validateNewChallengeState(nextChallenge)){
+    showNotice("New challenge validation failed. Your current challenge is unchanged.");
+    return false;
+  }
+
+  // Step 2: Create and validate the current challenge archive.
+  let archive;
+
+  try {
+    archive=createArchiveSnapshot();
+  } catch(error) {
+    showNotice("Could not prepare the archive. Your current challenge is unchanged.");
+    return false;
+  }
+
+  if(!validateArchiveSnapshot(archive)){
+    showNotice("Archive validation failed. Your current challenge is unchanged.");
+    return false;
+  }
+
+  // Step 3: Prevent duplicate archival.
+  if(state.archives.some(item=>item.id===archive.id)){
+    showNotice("This challenge has already been archived.");
+    return false;
+  }
+
+  // Step 4: Prepare the complete replacement state.
+  const transactionState={
+    ...nextChallenge,
+    archives:[
+      ...JSON.parse(JSON.stringify(state.archives)),
+      archive
+    ]
+  };
+
+  if(!validateNewChallengeState(transactionState)){
+    showNotice("The new challenge could not be prepared safely.");
+    return false;
+  }
+
+  // Step 5: Preserve the existing stored data for rollback.
+  let previousRaw;
+
+  try {
+    previousRaw=localStorage.getItem(KEY);
+  } catch(error) {
+    showNotice("Could not access saved data. Your current challenge is unchanged.");
+    return false;
+  }
+
+  // Step 6: Write archive + new active challenge together.
+  try {
+    localStorage.setItem(
+      KEY,
+      JSON.stringify(transactionState)
+    );
+
+    // Step 7: Read back and verify the complete transaction.
+    const saved=JSON.parse(localStorage.getItem(KEY));
+
+    const archiveVerified=
+      Array.isArray(saved.archives) &&
+      saved.archives.some(item=>
+        item.id===archive.id &&
+        validateArchiveSnapshot(item)
+      );
+
+    const challengeVerified=
+      saved.challengeId===nextChallenge.challengeId &&
+      saved.startDate===nextChallenge.startDate &&
+      saved.durationDays===nextChallenge.durationDays &&
+      saved.currentDay===1 &&
+      Object.keys(saved.days || {}).length===0 &&
+      Object.keys(saved.dayTypes || {}).length===0;
+
+    if(!archiveVerified || !challengeVerified){
+      throw new Error("Transaction verification failed.");
+    }
+
+    // Step 8: Only now replace the in-memory active challenge.
+    state=saved;
+
+    showNotice("Previous challenge archived and new challenge started.");
+
+    return true;
+
+  } catch(error) {
+
+    // Restore the exact previous stored data if anything fails.
+    try {
+      if(previousRaw===null){
+        localStorage.removeItem(KEY);
+      }else{
+        localStorage.setItem(KEY,previousRaw);
+      }
+    } catch(rollbackError) {
+      showNotice("Critical storage error. Please avoid closing the app and export a backup if possible.");
+      return false;
+    }
+
+    showNotice("The transition failed. Your previous challenge has been restored.");
+    return false;
+  }
+}  
 function renderChallengeHistory(){
   const container=document.getElementById("historyContent");
   if(!container)return;
