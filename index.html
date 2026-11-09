@@ -923,6 +923,111 @@ button.more-item {
   background:var(--panel);
 }
 
+/* CHALLENGE HISTORY — ARCHIVE CARDS AND READ-ONLY DETAILS */
+
+.history-archive-card {
+  padding:14px;
+  margin-top:11px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--panel);
+}
+
+.history-archive-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.history-archive-top strong {
+  font-size:14px;
+}
+
+.history-archive-date {
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+  margin-top:5px;
+}
+
+.history-archive-metrics {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin:13px 0;
+}
+
+.history-archive-metric {
+  padding:9px;
+  border-radius:10px;
+  background:var(--panel2);
+}
+
+.history-archive-metric small {
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.history-archive-metric strong {
+  display:block;
+  font-size:16px;
+  margin-top:3px;
+}
+
+.history-readonly-day {
+  padding:13px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.history-readonly-day:last-child {
+  border-bottom:0;
+}
+
+.history-readonly-day-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-bottom:9px;
+}
+
+.history-readonly-day-head strong {
+  font-size:13px;
+}
+
+.history-readonly-status {
+  font-size:10px;
+  color:var(--muted);
+}
+
+.history-readonly-habit {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:7px 0;
+  font-size:12px;
+}
+
+.history-readonly-habit span:last-child {
+  font-weight:700;
+}
+
+.history-readonly-type {
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:5px;
+}
+
+.history-readonly-label {
+  color:var(--muted);
+  font-size:10px;
+  margin-top:12px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
 /* STAGE 3 — DETAILED ANALYTICS DESIGN */
 
 .analytics-summary-four {
@@ -3159,12 +3264,170 @@ function archiveAndStartNewChallenge(mode,startDate,durationDays){
     return false;
   }
 }  
+function escapeHistoryText(value){
+  return String(value ?? "").replace(/[&<>"']/g,char=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[char]));
+}
+
+function historyDate(value){
+  const date=new Date(value+"T12:00:00");
+
+  if(isNaN(date.getTime())) return "Date unavailable";
+
+  return date.toLocaleDateString("en-IN",{
+    day:"numeric",
+    month:"short",
+    year:"numeric"
+  });
+}
+
+function renderArchiveDetails(index){
+  const container=document.getElementById("historyContent");
+  const archive=state.archives[index];
+
+  if(!container || !archive || !validateArchiveSnapshot(archive)){
+    showNotice("This archived challenge record could not be opened.");
+    renderChallengeHistory();
+    return;
+  }
+
+  const elapsed=Math.max(
+    0,
+    Math.min(
+      Number(archive.elapsedDays)||0,
+      Number(archive.durationDays)||0
+    )
+  );
+
+  let dailyHistory="";
+
+  for(let day=1;day<=elapsed;day++){
+    const dayData=archive.days[day] || {};
+    const checks=dayData.checks || {};
+    const type=archive.dayTypes[day] || "College day";
+    const selected=archive.typeSettings[type];
+
+    const applicable=Array.isArray(selected)
+      ? archive.habits.filter(h=>selected.includes(h.id))
+      : archive.habits;
+
+    const completed=applicable.filter(
+      h=>checks[h.id]===true
+    ).length;
+
+    const date=new Date(archive.startDate+"T12:00:00");
+    date.setDate(date.getDate()+day-1);
+
+    const dateLabel=date.toLocaleDateString("en-IN",{
+      day:"numeric",
+      month:"short",
+      year:"numeric"
+    });
+
+    const status=dayData.submitted
+      ? "Submitted"
+      : "Not submitted";
+
+    const habitRows=applicable.length
+      ? applicable.map(h=>`
+          <div class="history-readonly-habit">
+            <span>${escapeHistoryText(h.label)}</span>
+            <span>${checks[h.id]===true ? "✓ Done" : "— Not done"}</span>
+          </div>
+        `).join("")
+      : `<p class="analytics-note">No habits were scheduled for this day.</p>`;
+
+    dailyHistory+=`
+      <div class="history-readonly-day">
+        <div class="history-readonly-day-head">
+          <strong>Day ${day} · ${dateLabel}</strong>
+          <span class="history-readonly-status">${status}</span>
+        </div>
+
+        <div class="history-readonly-type">
+          Day type: ${escapeHistoryText(type)}
+        </div>
+
+        <p class="analytics-note">
+          ${completed} of ${applicable.length} applicable habits completed
+        </p>
+
+        ${habitRows}
+      </div>
+    `;
+  }
+
+  container.innerHTML=`
+    <div class="analytics-panel">
+      <button type="button" class="back-button"
+        onclick="renderChallengeHistory()">
+        ← Previous Challenges
+      </button>
+
+      <div class="analytics-panel-heading" style="margin-top:14px">
+        <span>🏆</span>
+        <div>
+          <h3>Archived Challenge</h3>
+          <small>Read-only historical record</small>
+        </div>
+      </div>
+
+      <p class="analytics-note">
+        ${historyDate(archive.startDate)} – ${historyDate(archive.endDate)}
+      </p>
+
+      <div class="history-archive-metrics">
+        <div class="history-archive-metric">
+          <small>Duration</small>
+          <strong>${archive.durationDays} days</strong>
+        </div>
+        <div class="history-archive-metric">
+          <small>Completion</small>
+          <strong>${archive.metrics.completion}%</strong>
+        </div>
+        <div class="history-archive-metric">
+          <small>Perfect Days</small>
+          <strong>${archive.metrics.perfectDays}</strong>
+        </div>
+        <div class="history-archive-metric">
+          <small>Submitted Days</small>
+          <strong>${archive.metrics.submittedDays}</strong>
+        </div>
+      </div>
+
+      <p class="analytics-note">
+        ${archive.elapsedDays} elapsed days recorded.
+        This archived challenge cannot be edited.
+      </p>
+    </div>
+
+    <div class="analytics-panel">
+      <h3>Daily History</h3>
+      <p class="analytics-note">
+        Original habit names, day types and checkmarks are preserved.
+      </p>
+
+      ${dailyHistory || `
+        <div class="history-empty">
+          <span>📖</span>
+          <strong>No elapsed days recorded</strong>
+          <p>This challenge was archived before its first day.</p>
+        </div>
+      `}
+    </div>
+  `;
+}
+
 function renderChallengeHistory(){
   const container=document.getElementById("historyContent");
   if(!container)return;
 
   const elapsed=elapsedChallengeDays();
-  const totalHabits=state.habits.length;
   const end=new Date(state.startDate+"T12:00:00");
   end.setDate(end.getDate()+state.durationDays-1);
 
@@ -3202,6 +3465,12 @@ function renderChallengeHistory(){
   ).toLocaleDateString("en-IN",{
     day:"numeric",month:"short",year:"numeric"
   });
+
+  const archives=state.archives
+    .map((archive,index)=>({archive,index}))
+    .sort((a,b)=>
+      new Date(b.archive.archivedAt)-new Date(a.archive.archivedAt)
+    );
 
   container.innerHTML=`
     <div class="analytics-panel">
@@ -3246,7 +3515,7 @@ function renderChallengeHistory(){
       </button>
 
       <p class="analytics-note">
-        Challenge archiving will be available in the next implementation stage.
+        New challenge setup will be enabled after the final workflow checks.
       </p>
     </div>
 
@@ -3255,15 +3524,46 @@ function renderChallengeHistory(){
         <span>📚</span>
         <div>
           <h3>Previous Challenges</h3>
-          <small>Your archived discipline records</small>
+          <small>${archives.length} archived challenge${archives.length===1?"":"s"}</small>
         </div>
       </div>
 
-      ${state.archives.length
-        ? state.archives.map((archive,index)=>`
-          <div class="history-archive-placeholder">
-            <strong>Challenge ${String(index+1).padStart(2,"0")}</strong>
-            <p class="analytics-note">Archived challenge record</p>
+      ${archives.length
+        ? archives.map(({archive,index},position)=>`
+          <div class="history-archive-card">
+            <div class="history-archive-top">
+              <div>
+                <strong>Challenge ${String(position+1).padStart(2,"0")}</strong>
+                <p class="history-archive-date">
+                  ${historyDate(archive.startDate)} – ${historyDate(archive.endDate)}
+                </p>
+              </div>
+              <strong>${archive.metrics.completion}%</strong>
+            </div>
+
+            <div class="history-archive-metrics">
+              <div class="history-archive-metric">
+                <small>Duration</small>
+                <strong>${archive.durationDays} days</strong>
+              </div>
+              <div class="history-archive-metric">
+                <small>Perfect Days</small>
+                <strong>${archive.metrics.perfectDays}</strong>
+              </div>
+              <div class="history-archive-metric">
+                <small>Submitted Days</small>
+                <strong>${archive.metrics.submittedDays}</strong>
+              </div>
+              <div class="history-archive-metric">
+                <small>Elapsed Days</small>
+                <strong>${archive.elapsedDays}</strong>
+              </div>
+            </div>
+
+            <button type="button"
+              onclick="renderArchiveDetails(${index})">
+              View Details
+            </button>
           </div>
         `).join("")
         : `
