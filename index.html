@@ -2769,6 +2769,107 @@ const notSubmitted = entries.filter(e=>dayStatus(e.day)==="Not submitted").lengt
       ?.classList.toggle("primary",analyticsRange===range);
   });
 }
+// CHALLENGE HISTORY — NEW CHALLENGE SETUP
+
+function createNewChallengeState(mode,startDate,durationDays){
+  if(!["copy","fresh"].includes(mode)){
+    throw new Error("Choose a valid setup mode.");
+  }
+
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(startDate)){
+    throw new Error("Enter a valid challenge start date.");
+  }
+
+  const parsedDate=new Date(startDate+"T12:00:00");
+
+  if(isNaN(parsedDate.getTime()) ||
+     parsedDate.toISOString().slice(0,10)!==startDate){
+    throw new Error("Enter a valid challenge start date.");
+  }
+
+  if(!Number.isInteger(durationDays) ||
+     durationDays<1 || durationDays>365){
+    throw new Error("Challenge duration must be 1–365 days.");
+  }
+
+  const builtInTypes=[
+    "College day",
+    "No college",
+    "Business / Event day",
+    "Rest day"
+  ];
+
+  let habits;
+  let customDayTypes;
+  let typeSettings;
+  let typeSettingsVersion;
+
+  if(mode==="copy"){
+    habits=JSON.parse(JSON.stringify(state.habits));
+    customDayTypes=JSON.parse(JSON.stringify(state.customDayTypes));
+    typeSettings=JSON.parse(JSON.stringify(state.typeSettings));
+    typeSettingsVersion=state.typeSettingsVersion;
+
+  }else{
+    habits=DEFAULTS.map((label,index)=>({
+      id:index+1,
+      label
+    }));
+
+    customDayTypes=[];
+    typeSettings={};
+    typeSettingsVersion=1;
+  }
+
+  [...builtInTypes,...customDayTypes].forEach(type=>{
+    if(!Array.isArray(typeSettings[type])){
+      typeSettings[type]=habits.map(h=>h.id);
+    }
+  });
+
+  return {
+    challengeId:"challenge-"+Date.now()+"-"+Math.random().toString(36).slice(2,8),
+    startDate,
+    durationDays,
+    currentDay:1,
+
+    habits,
+    days:{},
+    dayTypes:{},
+    typeSettings,
+    customDayTypes,
+    typeSettingsVersion,
+
+    // Existing archived records remain untouched.
+    archives:JSON.parse(JSON.stringify(state.archives))
+  };
+}
+
+// Validate a prepared challenge before it can be applied.
+function validateNewChallengeState(next){
+  if(!next || typeof next!=="object") return false;
+
+  if(typeof next.challengeId!=="string" ||
+     !next.challengeId) return false;
+
+  if(!Array.isArray(next.habits) ||
+     !next.habits.length) return false;
+
+  if(!Number.isInteger(next.durationDays) ||
+     next.durationDays<1 ||
+     next.durationDays>365) return false;
+
+  if(!next.days || Object.keys(next.days).length!==0) return false;
+
+  if(!next.dayTypes ||
+     Object.keys(next.dayTypes).length!==0) return false;
+
+  if(!next.typeSettings ||
+     !Array.isArray(next.customDayTypes) ||
+     !Array.isArray(next.archives)) return false;
+
+  return true;
+}
 
 // CHALLENGE HISTORY — ARCHIVE SNAPSHOT ENGINE
 
