@@ -3467,6 +3467,44 @@ function renderNewChallengeSetup(){
   `;
 }
 
+// CHALLENGE HISTORY — FINAL START CONFIRMATION
+
+function confirmStartNewChallenge(mode,startDate,durationDays){
+  const confirmed=confirm(
+    "Are you sure you want to archive your current challenge and start a new one?\n\n"+
+    "Your current challenge and all its historical records will be saved in Previous Challenges and become read-only.\n\n"+
+    "The new challenge will start with zero progress.\n\n"+
+    "This action cannot be undone from the app."
+  );
+
+  if(!confirmed)return;
+
+  const success=archiveAndStartNewChallenge(
+    mode,
+    startDate,
+    durationDays
+  );
+
+  if(!success)return;
+
+  // Refresh the new active challenge and open Today.
+  render();
+  save();
+  showView("today");
+
+  showNotice("New challenge started successfully!");
+}
+  
+// SHARED STATUS MESSAGE
+
+function showNotice(message){
+  const notice=document.getElementById("notice");
+  if(!notice)return;
+
+  notice.textContent=message || "";
+  notice.classList.toggle("hidden",!message);
+}
+
 // NEW CHALLENGE — REVIEW SCREEN
 
 function reviewNewChallengeSetup(){
@@ -3498,7 +3536,6 @@ function reviewNewChallengeSetup(){
     : Number(durationSelect?.value);
 
   try {
-    // Validate by preparing a temporary state only.
     const preview=createNewChallengeState(
       mode,
       startDate,
@@ -3571,28 +3608,27 @@ function reviewNewChallengeSetup(){
       </div>
 
       <div class="new-challenge-warning">
-        <strong>What happens when this workflow is activated?</strong>
+        <strong>Before you continue</strong>
         <p>
-          Your current challenge will be saved to Previous Challenges.
-          A new challenge will then begin with the setup shown above.
+          Your current challenge will be archived and become read-only.
+          Its historical checkmarks, habits and day types will be preserved.
         </p>
         <p>
-          Archived records will remain read-only, and the new challenge
-          will start with zero progress.
+          Your new challenge will begin with zero progress.
         </p>
         <p>
-          No changes have been made yet.
+          You will receive one final confirmation before the transition.
         </p>
       </div>
 
       <button type="button" class="primary"
-        style="width:100%;margin-top:15px" disabled>
-        Start New Challenge — Coming Next
+        style="width:100%;margin-top:15px"
+        onclick="confirmStartNewChallenge('${mode}','${startDate}',${duration})">
+        Archive & Start New Challenge
       </button>
 
       <p class="analytics-note">
-        The final transaction will be connected after this interface
-        has been verified.
+        Nothing changes until you confirm the final action.
       </p>
     </div>
   `;
