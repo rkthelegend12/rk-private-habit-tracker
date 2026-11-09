@@ -1028,6 +1028,89 @@ button.more-item {
   letter-spacing:.5px;
 }
 
+/* NEW CHALLENGE — SETUP AND REVIEW */
+
+.new-challenge-option {
+  display:flex;
+  gap:11px;
+  align-items:flex-start;
+  padding:13px;
+  margin-top:10px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:var(--panel);
+}
+
+.new-challenge-option input {
+  width:18px;
+  height:18px;
+  margin-top:2px;
+  accent-color:var(--blue);
+  flex-shrink:0;
+}
+
+.new-challenge-option strong {
+  display:block;
+  font-size:13px;
+}
+
+.new-challenge-option small {
+  display:block;
+  margin-top:5px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+.new-challenge-field {
+  margin-top:15px;
+}
+
+.new-challenge-field label {
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+.new-challenge-field input,
+.new-challenge-field select {
+  width:100%;
+  min-height:43px;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  color:var(--text);
+  background:var(--panel);
+}
+
+.new-challenge-warning {
+  padding:12px;
+  margin-top:15px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  font-size:11px;
+  line-height:1.5;
+  color:var(--muted);
+}
+
+.new-challenge-review-row {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:11px 0;
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+}
+
+.new-challenge-review-row:last-child {
+  border-bottom:0;
+}
+
+.new-challenge-review-row span {
+  color:var(--muted);
+}
+  
 /* STAGE 3 — DETAILED ANALYTICS DESIGN */
 
 .analytics-summary-four {
@@ -3286,6 +3369,235 @@ function historyDate(value){
   });
 }
 
+// NEW CHALLENGE — SETUP SCREEN
+
+function toggleNewChallengeCustom(){
+  const select=document.getElementById("newChallengeDuration");
+  const custom=document.getElementById("newChallengeCustomDays");
+
+  if(!select || !custom)return;
+
+  custom.style.display=select.value==="custom" ? "block" : "none";
+}
+
+function renderNewChallengeSetup(){
+  const container=document.getElementById("historyContent");
+  if(!container)return;
+
+  const today=localDateKey();
+
+  container.innerHTML=`
+    <div class="analytics-panel">
+      <button type="button" class="back-button"
+        onclick="renderChallengeHistory()">
+        ← Challenge History
+      </button>
+
+      <div class="analytics-panel-heading" style="margin-top:14px">
+        <span>🚀</span>
+        <div>
+          <h3>Set Up Your Next Challenge</h3>
+          <small>Choose how you want to begin again</small>
+        </div>
+      </div>
+
+      <p class="analytics-note">
+        Your current challenge remains active while you prepare the next one.
+      </p>
+
+      <label class="new-challenge-option">
+        <input type="radio" name="newChallengeMode"
+          value="copy" checked>
+        <span>
+          <strong>Copy Existing Setup</strong>
+          <small>
+            Keep your current habits, custom day types and
+            day-type settings. All progress starts fresh.
+          </small>
+        </span>
+      </label>
+
+      <label class="new-challenge-option">
+        <input type="radio" name="newChallengeMode"
+          value="fresh">
+        <span>
+          <strong>Start Fresh</strong>
+          <small>
+            Use the default habits and standard day types.
+            Custom day types and previous settings won't carry over.
+          </small>
+        </span>
+      </label>
+
+      <div class="new-challenge-field">
+        <label for="newChallengeStartDate">Challenge Start Date</label>
+        <input type="date" id="newChallengeStartDate"
+          value="${today}">
+      </div>
+
+      <div class="new-challenge-field">
+        <label for="newChallengeDuration">Challenge Duration</label>
+        <select id="newChallengeDuration"
+          onchange="toggleNewChallengeCustom()">
+          <option value="21">21 Days</option>
+          <option value="30" selected>30 Days</option>
+          <option value="45">45 Days</option>
+          <option value="custom">Custom Duration</option>
+        </select>
+      </div>
+
+      <div class="new-challenge-field"
+        id="newChallengeCustomDays" style="display:none">
+        <label for="newChallengeCustomValue">Custom Duration (1–365 days)</label>
+        <input type="number" id="newChallengeCustomValue"
+          min="1" max="365" step="1" placeholder="Enter number of days">
+      </div>
+
+      <div class="new-challenge-warning">
+        <strong>Important:</strong> This is only a setup preview.
+        Your current challenge will not be archived, reset or changed here.
+      </div>
+
+      <button type="button" class="primary"
+        style="width:100%;margin-top:16px"
+        onclick="reviewNewChallengeSetup()">
+        Review New Challenge
+      </button>
+    </div>
+  `;
+}
+
+// NEW CHALLENGE — REVIEW SCREEN
+
+function reviewNewChallengeSetup(){
+  const container=document.getElementById("historyContent");
+
+  const mode=document.querySelector(
+    'input[name="newChallengeMode"]:checked'
+  )?.value;
+
+  const startDate=document.getElementById(
+    "newChallengeStartDate"
+  )?.value;
+
+  const durationSelect=document.getElementById(
+    "newChallengeDuration"
+  );
+
+  const customValue=document.getElementById(
+    "newChallengeCustomValue"
+  );
+
+  if(!container || !["copy","fresh"].includes(mode)){
+    showNotice("Choose a valid setup option.");
+    return;
+  }
+
+  const duration=durationSelect?.value==="custom"
+    ? Number(customValue?.value)
+    : Number(durationSelect?.value);
+
+  try {
+    // Validate by preparing a temporary state only.
+    const preview=createNewChallengeState(
+      mode,
+      startDate,
+      duration
+    );
+
+    if(!validateNewChallengeState(preview)){
+      throw new Error("The new challenge setup is invalid.");
+    }
+
+  } catch(error) {
+    showNotice(error.message || "Please check your setup details.");
+    return;
+  }
+
+  const end=new Date(startDate+"T12:00:00");
+  end.setDate(end.getDate()+duration-1);
+
+  const endLabel=end.toLocaleDateString("en-IN",{
+    day:"numeric",
+    month:"short",
+    year:"numeric"
+  });
+
+  const startLabel=new Date(
+    startDate+"T12:00:00"
+  ).toLocaleDateString("en-IN",{
+    day:"numeric",
+    month:"short",
+    year:"numeric"
+  });
+
+  const modeLabel=mode==="copy"
+    ? "Copy existing setup"
+    : "Start fresh";
+
+  container.innerHTML=`
+    <div class="analytics-panel">
+      <button type="button" class="back-button"
+        onclick="renderNewChallengeSetup()">
+        ← Edit Setup
+      </button>
+
+      <div class="analytics-panel-heading" style="margin-top:14px">
+        <span>📋</span>
+        <div>
+          <h3>Review Your New Challenge</h3>
+          <small>Check these details before proceeding</small>
+        </div>
+      </div>
+
+      <div class="new-challenge-review-row">
+        <span>Setup type</span>
+        <strong>${modeLabel}</strong>
+      </div>
+
+      <div class="new-challenge-review-row">
+        <span>Start date</span>
+        <strong>${startLabel}</strong>
+      </div>
+
+      <div class="new-challenge-review-row">
+        <span>End date</span>
+        <strong>${endLabel}</strong>
+      </div>
+
+      <div class="new-challenge-review-row">
+        <span>Duration</span>
+        <strong>${duration} days</strong>
+      </div>
+
+      <div class="new-challenge-warning">
+        <strong>What happens when this workflow is activated?</strong>
+        <p>
+          Your current challenge will be saved to Previous Challenges.
+          A new challenge will then begin with the setup shown above.
+        </p>
+        <p>
+          Archived records will remain read-only, and the new challenge
+          will start with zero progress.
+        </p>
+        <p>
+          No changes have been made yet.
+        </p>
+      </div>
+
+      <button type="button" class="primary"
+        style="width:100%;margin-top:15px" disabled>
+        Start New Challenge — Coming Next
+      </button>
+
+      <p class="analytics-note">
+        The final transaction will be connected after this interface
+        has been verified.
+      </p>
+    </div>
+  `;
+}
+
 function renderArchiveDetails(index){
   const container=document.getElementById("historyContent");
   const archive=state.archives[index];
@@ -3510,12 +3822,13 @@ function renderChallengeHistory(){
         </div>
       </div>
 
-      <button class="primary" block disabled>
-        Archive & Start New Challenge
-      </button>
+      <button type="button"
+  onclick="renderNewChallengeSetup()">
+  Set Up Next Challenge
+</button>
 
       <p class="analytics-note">
-        New challenge setup will be enabled after the final workflow checks.
+       You can prepare your next challenge without changing your current progress.
       </p>
     </div>
 
