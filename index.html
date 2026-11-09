@@ -1683,7 +1683,8 @@ let state={
   days:{},
   dayTypes:{},
   typeSettings:{},
-  customDayTypes:[]
+  customDayTypes:[],
+  archives:[]
 };
 
 function load(){
@@ -1714,6 +1715,10 @@ function load(){
   state.customDayTypes = Array.isArray(state.customDayTypes)
     ? state.customDayTypes : [];
 
+  // CHALLENGE HISTORY — SAFE DATA MIGRATION
+  state.archives = Array.isArray(state.archives)
+    ? state.archives : [];
+  
   const builtInTypes = [
     "College day",
     "No college",
@@ -2734,7 +2739,36 @@ function renameHabit(id){const h=state.habits.find(x=>x.id===id);if(!h)return;co
 function deleteHabit(id){if(!confirm("Delete this habit from the checklist? This changes scoring for the challenge."))return;state.habits=state.habits.filter(x=>x.id!==id);save();render();}
 document.getElementById("addForm").addEventListener("submit",e=>{e.preventDefault();const input=document.getElementById("newHabit"),label=input.value.trim();if(!label)return;state.habits.push({id:Math.max(0,...state.habits.map(h=>h.id))+1,label});input.value="";save();render();showNotice("Habit added.");});
 function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="rk-habit-tracker-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-function importData(ev){const file=ev.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);if(!Array.isArray(s.habits)||!s.days)throw Error("Invalid");if(confirm("Replace the current tracker with this backup?")){state=s;save();render();showNotice("Backup imported.");}}catch(e){showNotice("That backup file could not be read.");}ev.target.value="";};r.readAsText(file);}
+function importData(ev){
+  const file=ev.target.files[0];
+  if(!file)return;
+
+  const r=new FileReader();
+
+  r.onload=()=>{
+    try{
+      const s=JSON.parse(r.result);
+
+      if(!Array.isArray(s.habits)||!s.days)throw Error("Invalid");
+
+      // Support backups created before Challenge History.
+      if(!Array.isArray(s.archives))s.archives=[];
+
+      if(confirm("Replace the current tracker with this backup?")){
+        state=s;
+        save();
+        render();
+        showNotice("Backup imported.");
+      }
+    }catch(e){
+      showNotice("That backup file could not be read.");
+    }
+
+    ev.target.value="";
+  };
+
+  r.readAsText(file);
+}
 initTheme();
 load();
 state.currentDay=challengeDay();
