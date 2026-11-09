@@ -1744,6 +1744,7 @@ function localDateKey(){
   return `${y}-${m}-${d}`;
 }
 let state={
+  challengeId:"challenge-"+Date.now(),
   startDate:localDateKey(),
   durationDays:30,
   currentDay:1,
@@ -1787,6 +1788,11 @@ function load(){
   state.archives = Array.isArray(state.archives)
     ? state.archives : [];
   
+  // CHALLENGE HISTORY — CHALLENGE ID MIGRATION
+  if(!state.challengeId){
+    state.challengeId="challenge-"+Date.now();
+  }
+  
   const builtInTypes = [
     "College day",
     "No college",
@@ -1811,8 +1817,10 @@ function load(){
 function save(){
   try {
     localStorage.setItem(KEY,JSON.stringify(state));
+    return true;
   } catch(e) {
     showNotice("Saving failed. Export a backup to avoid losing progress.");
+    return false;
   }
 }
 
@@ -2761,6 +2769,74 @@ const notSubmitted = entries.filter(e=>dayStatus(e.day)==="Not submitted").lengt
       ?.classList.toggle("primary",analyticsRange===range);
   });
 }
+
+// CHALLENGE HISTORY — ARCHIVE SNAPSHOT ENGINE
+
+function createArchiveSnapshot(){
+  const elapsed=elapsedChallengeDays();
+
+  let completedHabits=0;
+  let applicableHabits=0;
+  let perfectDays=0;
+  let submittedDays=0;
+
+  for(let day=1;day<=elapsed;day++){
+    const applicable=habitsForDay(day);
+    const completed=completedCount(day);
+
+    completedHabits+=completed;
+    applicableHabits+=applicable.length;
+
+    if(applicable.length>0 &&
+       completed===applicable.length){
+      perfectDays++;
+    }
+
+    if(state.days[day]?.submitted){
+      submittedDays++;
+    }
+  }
+
+  const endDate=new Date(
+    state.startDate+"T12:00:00"
+  );
+
+  endDate.setDate(
+    endDate.getDate()+state.durationDays-1
+  );
+
+  const completion=applicableHabits
+    ? Math.round(
+        completedHabits/applicableHabits*100
+      )
+    : 0;
+
+  return {
+    id:state.challengeId,
+    archivedAt:new Date().toISOString(),
+
+    startDate:state.startDate,
+    endDate:endDate.toISOString().slice(0,10),
+    durationDays:state.durationDays,
+    elapsedDays:elapsed,
+
+    habits:JSON.parse(JSON.stringify(state.habits)),
+    days:JSON.parse(JSON.stringify(state.days)),
+    dayTypes:JSON.parse(JSON.stringify(state.dayTypes)),
+    typeSettings:JSON.parse(JSON.stringify(state.typeSettings)),
+    customDayTypes:JSON.parse(JSON.stringify(state.customDayTypes)),
+    typeSettingsVersion:state.typeSettingsVersion,
+
+    metrics:{
+      completedHabits,
+      applicableHabits,
+      completion,
+      perfectDays,
+      submittedDays
+    }
+  };
+}
+  
 function renderChallengeHistory(){
   const container=document.getElementById("historyContent");
   if(!container)return;
